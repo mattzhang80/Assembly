@@ -16,8 +16,8 @@ iChar:
     .space 4
 
 .section .text
-.global _main
-_main:
+.global main
+main:
     // Prologue
     sub sp, sp, #48
     stp x29, x30, [sp, #32]
@@ -29,7 +29,7 @@ _main:
 
     // Main loop
 loop:
-    bl _getchar
+    bl getchar
     str w0, [sp, #16]      // Store character in iChar
     cmp w0, #-1
     beq endloop
@@ -98,7 +98,7 @@ end:
     ldr x1, [sp, #32]
     ldr x2, [sp, #24]
     ldr x3, printfFormatStr
-    bl _printf
+    bl printf
 
     // Epilogue
     mov w0, #0
