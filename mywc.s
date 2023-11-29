@@ -1,143 +1,100 @@
-//----------------------------------------------------------------------
-// mywc.s
-// Authors: Alex Delistathis, Matthew Zhang
-//----------------------------------------------------------------------
-
-        .section .rodata
-        
+.section .rodata
 printfFormatStr:
-        .string "%7ld %7ld %7ld\n"
-        
-//----------------------------------------------------------------------
-        .section .data
+    .string "%7ld %7ld %7ld\n"
 
+.section .bss
+.align 8
 lLineCount:
-        .8byte   0
+    .space 8
 lWordCount:
-        .8byte   0
+    .space 8
 lCharCount:
-        .8byte   0
-iInWord:
-        .4byte   0
+    .space 8
 
-//----------------------------------------------------------------------
-        .section .bss
-
-iChar:
-        .skip   8
- 
-//----------------------------------------------------------------------
-        .section .text
-
-        //--------------------------------------------------------------
-        // Enumerate and count how many lines, words, and characters
-        // are in stdin. A word is a sequence of non-whitespace
-        // characters. Whitespace is defined by the isspace() function.
-        // Return 0.
-        // int main(void)
-        //--------------------------------------------------------------
-
-        // Must be a multiple of 16
-        .equ    MAIN_STACK_BYTECOUNT, 16
-
-        .global main
-
+.section .text
+.global main
 main:
-        // Prologue
-        sub sp, sp, MAIN_STACK_BYTECOUNT
-        str x30, [sp]
+    sub sp, sp, 16
+    str x30, [sp]
+
+    ; Initialize iInWord in w2 to FALSE (0)
+    mov w2, 0
 
 loop:
-        // if ((iChar = getchar()) == EOF) goto endLoop;
-        bl      getchar
-        str     w0, [sp, iChar]
-        cmp     w0, -1
-        beq     endloop
+    bl getchar
+    mov w1, w0           ; Store character in w1
+    cmp w1, -1
+    beq endloop
 
-        // lCharCount++;
-        adr     x0, lCharCount
-        ldr     x1, [x0]
-        add     x1, x1, 1
-        str     x1, [x0]
+    ; Increment lCharCount
+    ldr x1, =lCharCount
+    ldr x2, [x1]
+    add x2, x2, 1
+    str x2, [x1]
 
-if1:
-        // if (isspace(iChar) == FALSE) goto elseif1;
-        ldr     w0, iChar
-        bl      isspace
-        cmp     w0, -1
-        beq     elseif1
+    ; Check if character is whitespace
+    bl isspace
+    cmp w0, 1
+    beq char_is_space
 
-        // if (iInWord == FALSE) goto elseif2;
-        ldr     w0, iInWord
-        cmp     w0, 0
-        beq     elseif2
+    ; Character is not a space
+    cmp w2, 0
+    bne not_first_word
+    ; First word character
+    ldr x1, =lWordCount
+    ldr x2, [x1]
+    add x2, x2, 1
+    str x2, [x1]
+    mov w2, 1
+    b loop
 
-        // lWordCount++;
-        adr     x0, lWordCount
-        ldr     x1, [x0]
-        add     x1, x1, 1
-        str     x1, [x0]
+char_is_space:
+    ; Character is a space, set iInWord to FALSE
+    mov w2, 0
+    cmp w1, 10           ; Check if newline
+    bne loop
+    ; Increment lLineCount
+    ldr x1, =lLineCount
+    ldr x2, [x1]
+    add x2, x2, 1
+    str x2, [x1]
+    b loop
 
-        // iInWord = FALSE;
-        mov     w0, 0
-        str     w0, [sp, iInWord]
+not_first_word:
+    ; Logic for non-first word character
+    b loop
 
-        // goto elseif2;
-        b       elseif2
-
-elseif1:
-        // if (iInWord == TRUE) goto elseif2;
-        ldr     w0, iInWord
-        cmp     w0, 1
-        beq     elseif2
-
-        // iInWord = TRUE;
-        mov     w0, 1
-        str     w0, [sp, iInWord]
-
-elseif2:
-        // if (iChar != '\n') goto loop;
-        ldr     w0, [sp, iChar]
-        cmp     w0, 10
-        bne     loop
-
-        // lLineCount++;
-        adr     x0, lLineCount
-        ldr     x1, [x0]
-        add     x1, x1, 1
-        str     x1, [x0]
-
-        // goto loop;
-        b       loop
-        
-endloop:        
-        // if (iInWord == FALSE) goto end;
-        ldr     w0, iInWord
-        cmp     w0, 0
-        beq     end
-
-        // lWordCount++;
-        adr     x0, lWordCount
-        ldr     x1, [x0]
-        add     x1, x1, 1
-        str     x1, [x0]
-
-        // goto end;
-        b       end
+endloop:
+    ; Check iInWord for last word
+    cmp w2, 1
+    bne end
+    ; Increment lWordCount
+    ldr x1, =lWordCount
+    ldr x2, [x1]
+    add x2, x2, 1
+    str x2, [x1]
 
 end:
-        // printf("%7ld %7ld %7ld\n", lLineCount, lWordCount, lCharCount);
-        adr     x0, printfFormatStr
-        mov     x1, lLineCount
-        mov     x2, lWordCount
-        mov     x3, lCharCount
-        bl      printf
+    ; Print results
+    ldr x0, =printfFormatStr
+    ldr x1, =lLineCount
+    ldr x1, [x1]
+    ldr x2, =lWordCount
+    ldr x2, [x2]
+    ldr x3, =lCharCount
+    ldr x3, [x3]
+    bl printf
 
-        // Epilogue and return 0
-        mov     w0, 0
-        ldr     x30, [sp]
-        add     sp, sp, MAIN_STACK_BYTECOUNT
-        ret
+    ; Epilogue and return 0
+    mov w0, 0
+    ldr x30, [sp]
+    add sp, sp, 16
+    ret
 
-        .size   main, (. - main)
-        
+isspace:
+    ; Simplified isspace function
+    cmp w0, 32  ; Space
+    cset w0, eq
+    cmp w0, 10  ; Newline
+    cset w0, eq
+    ret
