@@ -14,68 +14,55 @@ lCharCount:
 .section .text
 .global main
 main:
-    sub sp, sp, 16
-    str x30, [sp]
-
-    ; Initialize iInWord in w2 to FALSE (0)
-    mov w2, 0
+    sub sp, sp, 16  // Set up stack frame
+    str x30, [sp]   // Save return address
 
 loop:
     bl getchar
-    mov w1, w0           ; Store character in w1
+    mov w1, w0      // Store character in w1
     cmp w1, -1
-    beq endloop
+    beq endloop     // Check for EOF
 
-    ; Increment lCharCount
     ldr x1, =lCharCount
     ldr x2, [x1]
     add x2, x2, 1
-    str x2, [x1]
+    str x2, [x1]    // Increment lCharCount
 
-    ; Check if character is whitespace
     bl isspace
     cmp w0, 1
     beq char_is_space
 
-    ; Character is not a space
     cmp w2, 0
     bne not_first_word
-    ; First word character
     ldr x1, =lWordCount
     ldr x2, [x1]
     add x2, x2, 1
     str x2, [x1]
-    mov w2, 1
+    mov w2, 1       // Set iInWord to TRUE
     b loop
 
 char_is_space:
-    ; Character is a space, set iInWord to FALSE
-    mov w2, 0
-    cmp w1, 10           ; Check if newline
+    mov w2, 0       // Set iInWord to FALSE
+    cmp w1, 10
     bne loop
-    ; Increment lLineCount
     ldr x1, =lLineCount
     ldr x2, [x1]
     add x2, x2, 1
-    str x2, [x1]
+    str x2, [x1]    // Increment lLineCount
     b loop
 
 not_first_word:
-    ; Logic for non-first word character
-    b loop
+    b loop          // Continue the loop
 
 endloop:
-    ; Check iInWord for last word
     cmp w2, 1
     bne end
-    ; Increment lWordCount
     ldr x1, =lWordCount
     ldr x2, [x1]
     add x2, x2, 1
-    str x2, [x1]
+    str x2, [x1]    // Increment lWordCount
 
 end:
-    ; Print results
     ldr x0, =printfFormatStr
     ldr x1, =lLineCount
     ldr x1, [x1]
@@ -83,18 +70,17 @@ end:
     ldr x2, [x2]
     ldr x3, =lCharCount
     ldr x3, [x3]
-    bl printf
+    bl printf       // Print results
 
-    ; Epilogue and return 0
     mov w0, 0
     ldr x30, [sp]
-    add sp, sp, 16
+    add sp, sp, 16  // Restore stack frame
     ret
 
 isspace:
-    ; Simplified isspace function
-    cmp w0, 32  ; Space
+    // Simplified isspace function
+    cmp w0, 32
     cset w0, eq
-    cmp w0, 10  ; Newline
+    cmp w0, 10
     cset w0, eq
     ret
