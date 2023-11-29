@@ -1,128 +1,143 @@
-//-------------------------------------------------------------------
+//----------------------------------------------------------------------
 // mywc.s
-// Authors: Matthew Zhang and Alexander Delisthathis
-//---------------------------------------------------------------------
-EOF EQU -1
-TAB EQU 9 ; tab ASCII
-NEWLINE EQU 10 ; newline ASCII
-VTAB EQU 11 ; vertical tab ASCII
-FF EQU 12 ; form feed ASCII
-CR EQU 13 ; carriage return ASCII
-SPACE EQU 32 ; space ASCII
-//---------------------------------------------------------------------
-    .section .rodata
+// Authors: Alex Delistathis, Matthew Zhang
+//----------------------------------------------------------------------
 
+        .section .rodata
+        
 printfFormatStr:
-    .string "%7ld %7ld %7ld\n"
+        .string "%7ld %7ld %7ld\n"
+        
 //----------------------------------------------------------------------
-    .section .data
-//----------------------------------------------------------------------
-    .section .bss
-.align 8
+        .section .data
 
 lLineCount:
-    .skip 8
-
+        .8byte   0
 lWordCount:
-    .skip 8
-
+        .8byte   0
 lCharCount:
-    .skip 8
-
-.align 4
-
-iChar: 
-    .skip 4
-
-iInWord: 
-    .skip 4
+        .8byte   0
+iInWord:
+        .4byte   0
 
 //----------------------------------------------------------------------
-    .section .text
-    //------------------------------------------------------------------
-    // Write to stdout counts of how many lines, words, and characters
-    // are in stdin. A word is a sequence of non-whitespace characters.
-    // Whitespace is defined by the isspace() function. Return 0. 
-    //------------------------------------------------------------------
-    
-    // Must be a multiple of 16
-    .equ    MAIN_STACK_BYTECOUNT, 16
+        .section .bss
 
-// replicate isspace() function
-isspace: 
-    cmp x0, TAB
-    beq isspace_return  
-    cmp x0, NEWLINE
-    beq isspace_return
-    cmp x0, VTAB
-    beq isspace_return
-    cmp x0, FF
-    beq isspace_return
-    cmp x0, CR
-    beq isspace_return
-    cmp x0, SPACE
-    beq isspace_return
+iChar:
+        .skip   8
+ 
+//----------------------------------------------------------------------
+        .section .text
 
-    // if not whitespace, return 0
-    mov x0, #0
-    ret
+        //--------------------------------------------------------------
+        // Enumerate and count how many lines, words, and characters
+        // are in stdin. A word is a sequence of non-whitespace
+        // characters. Whitespace is defined by the isspace() function.
+        // Return 0.
+        // int main(void)
+        //--------------------------------------------------------------
 
-// if whitespace, return 1
-isspace_return:
-    mov     x0, #1
-    ret
+        // Must be a multiple of 16
+        .equ    MAIN_STACK_BYTECOUNT, 16
 
-.global main
-main: 
-    // Function prologue
-    sub     sp, sp, MAIN_STACK_BYTECOUNT
-    str     x30, [sp]
+        .global main
 
-    //main loop
-loop_start: 
+main:
+        // Prologue
+        sub sp, sp, MAIN_STACK_BYTECOUNT
+        str x30, [sp]
 
-    // while ((iChar = getchar()) != EOF)
-    bl getchar
-    mov iChar, x0
-    cmp x0, EOF
-    beq loop_end
+loop:
+        // if ((iChar = getchar()) == EOF) goto endLoop;
+        bl      getchar
+        str     w0, [sp, iChar]
+        cmp     w0, -1
+        beq     endloop
 
-    // lCharCount++
-    adr x0, lCharCount
-    ldr x1, [x0]
-    add x1, x1, 1
-    str x1, [x0]
+        // lCharCount++;
+        adr     x0, lCharCount
+        ldr     x1, [x0]
+        add     x1, x1, 1
+        str     x1, [x0]
 
-    // check for whitespace and update lWordCount and iInWord
-    bl isspace
-    cmp x0, #1
-    bne not_whitespace
-    //unfinished section
+if1:
+        // if (isspace(iChar) == FALSE) goto elseif1;
+        ldr     w0, iChar
+        bl      isspace
+        cmp     w0, -1
+        beq     elseif1
 
-    // Check for '\n' for newline
-    cmp x0, NEWLINE
-    bne loop_start ; if not newline, continue loop
-    adr x0, lLineCount ; if newline, increment line count process
-    ldr x1, [x0]
-    add x1, x1, 1
-    str x1, [x0]
-    b loop_start ; unconditional branch to continue loop 
+        // if (iInWord == FALSE) goto elseif2;
+        ldr     w0, iInWord
+        cmp     w0, 0
+        beq     elseif2
 
-not_whitespace:
-    //unfinished section
+        // lWordCount++;
+        adr     x0, lWordCount
+        ldr     x1, [x0]
+        add     x1, x1, 1
+        str     x1, [x0]
 
-loop_end:
-        // print out counts
-        adr x0, lLineCount
-        ldr x0, [x0]
-        adr x1, lWordCount
-        ldr x1, [x1]
-        adr x2, lCharCount
-        ldr x2, [x2]
-        bl printf
-    
-        // Function epilogue
-        mov w0, 0
-        ldr x30, [sp]
-        add sp, sp, MAIN_STACK_BYTECOUNT
+        // iInWord = FALSE;
+        mov     w0, 0
+        str     w0, [sp, iInWord]
+
+        // goto elseif2;
+        b       elseif2
+
+elseif1:
+        // if (iInWord == TRUE) goto elseif2;
+        ldr     w0, iInWord
+        cmp     w0, 1
+        beq     elseif2
+
+        // iInWord = TRUE;
+        mov     w0, 1
+        str     w0, [sp, iInWord]
+
+elseif2:
+        // if (iChar != '\n') goto loop;
+        ldr     w0, [sp, iChar]
+        cmp     w0, 10
+        bne     loop
+
+        // lLineCount++;
+        adr     x0, lLineCount
+        ldr     x1, [x0]
+        add     x1, x1, 1
+        str     x1, [x0]
+
+        // goto loop;
+        b       loop
+        
+endloop:        
+        // if (iInWord == FALSE) goto end;
+        ldr     w0, iInWord
+        cmp     w0, 0
+        beq     end
+
+        // lWordCount++;
+        adr     x0, lWordCount
+        ldr     x1, [x0]
+        add     x1, x1, 1
+        str     x1, [x0]
+
+        // goto end;
+        b       end
+
+end:
+        // printf("%7ld %7ld %7ld\n", lLineCount, lWordCount, lCharCount);
+        adr     x0, printfFormatStr
+        mov     x1, lLineCount
+        mov     x2, lWordCount
+        mov     x3, lCharCount
+        bl      printf
+
+        // Epilogue and return 0
+        mov     w0, 0
+        ldr     x30, [sp]
+        add     sp, sp, MAIN_STACK_BYTECOUNT
         ret
+
+        .size   main, (. - main)
+        
