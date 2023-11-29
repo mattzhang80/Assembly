@@ -12,106 +12,117 @@ lCharCount:
     .space 8
 iInWord:
     .space 4
+iChar:
+    .space 4
 
 .section .text
-.global main
-main:
-    sub sp, sp, 16    // Stack frame setup
-    str x30, [sp]     // Save return address
+.global _main
+_main:
+    // Prologue
+    sub sp, sp, #48
+    stp x29, x30, [sp, #32]
+    add x29, sp, #32
 
     // Initialize iInWord to FALSE (0)
-    mov w1, 0
-    str w1, [sp, 12]
+    mov w8, 0
+    str w8, [sp, #12]
 
+    // Main loop
 loop:
-    bl getchar        // Call getchar
-    cmp w0, -1        // Check for EOF
+    bl _getchar
+    str w0, [sp, #16]      // Store character in iChar
+    cmp w0, #-1
     beq endloop
-    mov w1, w0        // Store character in w1
 
     // Increment lCharCount
-    ldr x2, =lCharCount
-    ldr x3, [x2]
-    add x3, x3, 1
-    str x3, [x2]
+    ldr x8, [sp, #24]
+    add x8, x8, #1
+    str x8, [sp, #24]
 
-    // Check if character is a whitespace
-    bl isspace
-    cmp w0, 1
+    // Check if character is whitespace
+    bl _isspace
+    cmp w0, #1
     beq char_is_whitespace
 
     // Character is not whitespace
-    ldr w2, [sp, 12]
-    cmp w2, 0
-    bne loop          // Continue if already in a word
+    ldr w8, [sp, #12]
+    cmp w8, #0
+    bne char_is_not_whitespace
 
-    // Starting a new word
-    ldr x2, =lWordCount
-    ldr x3, [x2]
-    add x3, x3, 1
-    str x3, [x2]
-    mov w2, 1         // Set iInWord to TRUE
-    str w2, [sp, 12]
+    // Found start of a new word
+    ldr x8, [sp, #32]
+    add x8, x8, #1
+    str x8, [sp, #32]
+    mov w8, #1
+    str w8, [sp, #12]
     b loop
 
 char_is_whitespace:
     // Character is a whitespace
-    ldr w2, [sp, 12]
-    cmp w2, 1
+    ldr w8, [sp, #12]
+    cmp w8, #1
     bne check_newline
 
-    // End of a word
-    ldr x2, =lWordCount
-    ldr x3, [x2]
-    add x3, x3, 1
-    str x3, [x2]
-    mov w2, 0         // Set iInWord to FALSE
-    str w2, [sp, 12]
+    // Set iInWord to FALSE
+    mov w8, #0
+    str w8, [sp, #12]
 
 check_newline:
-    cmp w1, 10        // Check if newline
+    ldr w8, [sp, #16]
+    cmp w8, #10
     bne loop
 
-    // Increment lLineCount for newline
-    ldr x2, =lLineCount
-    ldr x3, [x2]
-    add x3, x3, 1
-    str x3, [x2]
+    // Increment lLineCount
+    ldr x8, [sp, #40]
+    add x8, x8, #1
+    str x8, [sp, #40]
+    b loop
+
+char_is_not_whitespace:
     b loop
 
 endloop:
-    // Check iInWord for last word
-    ldr w2, [sp, 12]
-    cmp w2, 1
+    // Check if last character was part of a word
+    ldr w8, [sp, #12]
+    cmp w8, #1
     bne end
 
     // Increment lWordCount for last word
-    ldr x2, =lWordCount
-    ldr x3, [x2]
-    add x3, x3, 1
-    str x3, [x2]
+    ldr x8, [sp, #32]
+    add x8, x8, #1
+    str x8, [sp, #32]
 
 end:
     // Print results
-    ldr x0, =printfFormatStr
-    ldr x1, =lLineCount
-    ldr x1, [x1]
-    ldr x2, =lWordCount
-    ldr x2, [x2]
-    ldr x3, =lCharCount
-    ldr x3, [x3]
-    bl printf
+    ldr x0, [sp, #40]
+    ldr x1, [sp, #32]
+    ldr x2, [sp, #24]
+    ldr x3, printfFormatStr
+    bl _printf
 
     // Epilogue
-    mov w0, 0
-    ldr x30, [sp]
-    add sp, sp, 16
+    mov w0, #0
+    ldp x29, x30, [sp, #32]
+    add sp, sp, #48
     ret
 
-isspace:
-    // Simplified isspace function
-    cmp w0, 32  // Space
-    cset w0, eq
-    cmp w0, 10  // Newline
-    cset w0, eq
+_isspace:
+    // Check if character is a space or newline
+    // Character to check is passed in w0
+
+    // Compare with space (ASCII 32)
+    cmp w0, #32
+    beq is_space
+
+    // Compare with newline (ASCII 10)
+    cmp w0, #10
+    beq is_space
+
+    // Not a whitespace character, return 0
+    mov w0, #0
+    ret
+
+is_space:
+    // It's a whitespace character, return 1
+    mov w0, #1
     ret
