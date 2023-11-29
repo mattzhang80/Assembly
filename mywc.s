@@ -38,9 +38,9 @@ loop:
     // Check if character is a whitespace
     bl isspace
     cmp w0, 1
-    beq char_is_space
+    beq char_is_whitespace
 
-    // Character is not a space
+    // Character is not whitespace
     ldr w2, [sp, 12]
     cmp w2, 0
     bne loop          // Continue if already in a word
@@ -54,10 +54,21 @@ loop:
     str w2, [sp, 12]
     b loop
 
-char_is_space:
-    // Character is a space, set iInWord to FALSE
-    mov w2, 0
+char_is_whitespace:
+    // Character is a whitespace
+    ldr w2, [sp, 12]
+    cmp w2, 1
+    bne check_newline
+
+    // End of a word
+    ldr x2, =lWordCount
+    ldr x3, [x2]
+    add x3, x3, 1
+    str x3, [x2]
+    mov w2, 0         // Set iInWord to FALSE
     str w2, [sp, 12]
+
+check_newline:
     cmp w1, 10        // Check if newline
     bne loop
 
