@@ -94,11 +94,14 @@ endloop:
 
 end:
     // Print results
-    ldr x0, [sp, #40]
-    ldr x1, [sp, #32]
-    ldr x2, [sp, #24]
-    ldr x3, printfFormatStr
-    bl printf
+    ldr x0, =printfFormatStr  // Load address of format string into x0
+
+    // Load the values of lLineCount, lWordCount, and lCharCount into x1, x2, x3
+    ldr x1, [sp, #40]         // Load lLineCount value into x1
+    ldr x2, [sp, #32]         // Load lWordCount value into x2
+    ldr x3, [sp, #24]         // Load lCharCount value into x3
+
+    bl printf                // Call printf
 
     // Epilogue
     mov w0, #0
