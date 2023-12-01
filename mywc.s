@@ -24,7 +24,7 @@ iInWord:
         .section .bss
 
 iChar:
-        .skip   8
+        .skip   4
  
 //----------------------------------------------------------------------
         .section .text
@@ -37,9 +37,16 @@ iChar:
         // int main(void)
         //--------------------------------------------------------------
 
+        // EOF
+        .equ    EOF, -1
+
+        // EOL
+        .equ    EOL, '\n'
+        
         // Must be a multiple of 16
         .equ    MAIN_STACK_BYTECOUNT, 16
 
+        
         .global main
 
 main:
@@ -50,8 +57,9 @@ main:
 loop:
         // if ((iChar = getchar()) == EOF) goto endLoop;
         bl      getchar
-        str     w0, [sp, iChar]
-        cmp     w0, -1
+        adr     x1, iChar
+        str     w0, [x1]
+        cmp     w0, EOF
         beq     endloop
 
         // lCharCount++;
@@ -62,14 +70,16 @@ loop:
 
 if1:
         // if (isspace(iChar) == FALSE) goto elseif1;
-        ldr     w0, iChar
+        adr     x1, iChar
+        ldr     w0, [x1]
         bl      isspace
-        cmp     w0, -1
+        cmp     w0, 0
         beq     elseif1
 
         // if (iInWord == FALSE) goto elseif2;
-        ldr     w0, iInWord
-        cmp     w0, 0
+        adr     x0, iInWord
+        ldr     w1, [x0]
+        cmp     w1, 0
         beq     elseif2
 
         // lWordCount++;
@@ -79,26 +89,30 @@ if1:
         str     x1, [x0]
 
         // iInWord = FALSE;
-        mov     w0, 0
-        str     w0, [sp, iInWord]
-
+        adr     x0, iInWord
+        mov     w1, 0
+        str     w1, [x0]
+        
         // goto elseif2;
         b       elseif2
 
 elseif1:
         // if (iInWord == TRUE) goto elseif2;
-        ldr     w0, iInWord
-        cmp     w0, 1
+        adr     x0, iInWord
+        ldr     w1, [x0]
+        cmp     w1, 1
         beq     elseif2
 
         // iInWord = TRUE;
-        mov     w0, 1
-        str     w0, [sp, iInWord]
+        adr     x0, iInWord
+        mov     w1, 1
+        str     w1, [x0]
 
 elseif2:
         // if (iChar != '\n') goto loop;
-        ldr     w0, [sp, iChar]
-        cmp     w0, 10
+        adr     x1, iChar
+        ldr     w0, [x1]
+        cmp     w0, EOL
         bne     loop
 
         // lLineCount++;
@@ -112,8 +126,9 @@ elseif2:
         
 endloop:        
         // if (iInWord == FALSE) goto end;
-        ldr     w0, iInWord
-        cmp     w0, 0
+        adr     x0, iInWord
+        ldr     w1, [x0]
+        cmp     w1, 0
         beq     end
 
         // lWordCount++;
@@ -128,9 +143,12 @@ endloop:
 end:
         // printf("%7ld %7ld %7ld\n", lLineCount, lWordCount, lCharCount);
         adr     x0, printfFormatStr
-        mov     x1, lLineCount
-        mov     x2, lWordCount
-        mov     x3, lCharCount
+        adr     x1, lLineCount
+        ldr     x1, [x1]
+        adr     x2, lWordCount
+        ldr     x2, [x2]
+        adr     x3, lCharCount
+        ldr     x3, [x3]
         bl      printf
 
         // Epilogue and return 0
