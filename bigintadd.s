@@ -41,25 +41,20 @@
         mov w7, #0
 
     loop_start:
+        // Loop through each digit of both bigints
         cmp w6, w5
         bge loop_end
 
-        // Calculate address offset for digits
-        lsl x10, w6, #3  // Digit offset calculation
-        add x11, x0, x10  // Address for x0's digit
-        add x12, x1, x10  // Address for x1's digit
-        add x13, x2, x10  // Address for x2's digit
-
         // Load in digit of both bigints
-        ldr x8, [x11, DIGITS_OFFSET]
-        ldr x9, [x12, DIGITS_OFFSET]
+        ldr x8, [x0, DIGITS_OFFSET, lsl #3]
+        ldr x9, [x1, DIGITS_OFFSET, lsl #3]
 
         // Add digits together
         adds x8, x8, x9
-        adc w7, w7, wzr
+        adc w7, wzr, wzr  // Use wzr for the third operand
 
         // Store digit in x2
-        str x8, [x13, DIGITS_OFFSET]
+        str x8, [x2, DIGITS_OFFSET, lsl #3]
 
         // Increment lIndex
         add w6, w6, #1
@@ -87,4 +82,3 @@
     epilogue:
         ldp x29, x30, [sp], #16
         ret
-        
