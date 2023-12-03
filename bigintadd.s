@@ -45,16 +45,24 @@
         cmp w6, w5
         bge loop_end
 
-        // Load in digit of both bigints
-        ldr x8, [x0, DIGITS_OFFSET], lsl #3
-        ldr x9, [x1, DIGITS_OFFSET], lsl #3
+        // Load in digit of bigint x0
+        add x10, x0, DIGITS_OFFSET
+        lsl x10, x10, #3
+        ldr x8, [x10]
+
+        // Load in digit of bigint x1
+        add x11, x1, DIGITS_OFFSET
+        lsl x11, x11, #3
+        ldr x9, [x11]
 
         // Add digits together
         adds x8, x8, x9
         adc w7, wzr, wzr  // Use wzr for the third operand
 
         // Store digit in x2
-        str x8, [x2, DIGITS_OFFSET] lsl #3
+        add x12, x2, DIGITS_OFFSET
+        lsl x12, x12, #3
+        str x8, [x12]
 
         // Increment lIndex
         add w6, w6, #1
@@ -68,7 +76,10 @@
         cmp w5, #MAX_DIGITS
         beq overflow
         mov x8, #1
-        str x8, [x2, DIGITS_OFFSET, w5] lsl #3
+        add x13, x2, DIGITS_OFFSET
+        add x13, x13, w5
+        lsl x13, x13, #3
+        str x8, [x13]
         add w5, w5, #1
 
     end:
