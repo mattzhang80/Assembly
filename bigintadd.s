@@ -77,7 +77,7 @@
         beq overflow
         mov x8, #1
         add x13, x2, DIGITS_OFFSET
-        add x13, x13, w5
+        add x13, x13, w5, uxtw
         lsl x13, x13, #3
         str x8, [x13]
         add w5, w5, #1
