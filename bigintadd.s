@@ -17,8 +17,8 @@
     .equ DIGITS_OFFSET, 8
 
     // BigIntAdd Function
-    .global bigintadd
-    bigintadd: 
+    .global BigInt_add
+    BigInt_add: 
         // Prologue
         stp x29, x30, [sp, #-16]!
         mov x29, sp
