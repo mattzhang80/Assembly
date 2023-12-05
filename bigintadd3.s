@@ -106,6 +106,15 @@ skip_clear:
     str     x0, [sp, LINDEX]
     b       loop1
 
+handle_zero_case:
+    // If both inputs zero, set the length of oSum to 0 and return TRUE
+    mov     x0, sp
+    add     x0, x0, OSUM
+    mov     x1, #0
+    str     x1, [x0, #16]  // Assume length at offset 16 of the struct
+    mov     x0, TRUE
+    b       func_end
+    
 loop1:
     // Load lIndex and lSumLength
     ldr     x4, [sp, LINDEX]       // x4 = lIndex
@@ -198,6 +207,4 @@ func_end:
     ldr     x30, [sp]
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
-
-.size BigInt_add, (. - BigInt_add)
-.size BigInt_larger, (. - BigInt_larger)
+    .size BigInt_add, (. - BigInt_add)
