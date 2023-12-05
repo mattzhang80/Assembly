@@ -302,7 +302,7 @@ handle_zero_case:
     	mov     x1, #0
     	str     x1, [x0, #16]  // Assuming the length is at offset 16 of the struct
     	mov     x0, TRUE
-    	b       end_function
+    	b       add_end
 
 
 add_end:
