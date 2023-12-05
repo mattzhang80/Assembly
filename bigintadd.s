@@ -130,7 +130,7 @@ BigInt_add:
         ldr     x0, [x0]
         ldr     x1, [sp, LSUMLENGTH]
         cmp     x0, x1
-        ble     before
+        bl     before
 
         // STORE oSum->aulDigits in a register
         mov     x0, sp
