@@ -30,7 +30,9 @@
     .equ    OADDEND2, 48
     .equ    OSUM, 56
 
-
+.global BigInt_add
+    .type BigInt_add, @function
+    
 BigInt_add: 
     // Prologue
     sub     sp, sp, ADD_STACK_BYTECOUNT
