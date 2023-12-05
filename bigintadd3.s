@@ -12,27 +12,43 @@
 
 //----------------------------------------------------------------------
 .section .text
-    .equ    ADD_STACK_BYTECOUNT, 80
+.equ    ADD_STACK_BYTECOUNT, 80
+.equ    TRUE, 1
+.equ    FALSE, 0
+.equ    MAX_DIGITS, 100
+.equ    SIZE_OF_UL, 8
+    
+// Local Variable Stack Offsets
+.equ    ULCARRY, 8 
+.equ    ULSUM, 16
+.equ    LINDEX, 24
+.equ    LSUMLENGTH, 32
 
-    // Constants
-    .equ    TRUE, 1
-    .equ    FALSE, 0
-    .equ    MAX_DIGITS, 100
-    .equ    SIZE_OF_UL, 8
-        
-    // Local Variable Stack Offsets
-    .equ    ULCARRY, 8 
-    .equ    ULSUM, 16
-    .equ    LINDEX, 24
-    .equ    LSUMLENGTH, 32
+// Parameter Stack Offsets
+.equ    OADDEND1, 40
+.equ    OADDEND2, 48
+.equ    OSUM, 56
 
-    // Parameter Stack Offsets
-    .equ    OADDEND1, 40
-    .equ    OADDEND2, 48
-    .equ    OSUM, 56
+.global BigInt_larger
+.type BigInt_larger, @function
+
+BigInt_larger:
+    // Prologue for BigInt_larger
+    // (Add if local variables or saved registers are used)
+
+    // Assuming x0 = lLength1, x1 = lLength2
+    cmp     x0, x1
+    b.gt    length1_greater
+    mov     x0, x1
+
+length1_greater:
+    ret
+
+    // Epilogue for BigInt_larger
+    // (Add if local variables or saved registers are used)
 
 .global BigInt_add
-    .type BigInt_add, @function
+.type BigInt_add, @function
 
 BigInt_add: 
     // Prologue
@@ -44,22 +60,16 @@ BigInt_add:
     str     x1, [sp, OADDEND2]
     str     x2, [sp, OSUM]
 
-    // Load in length of OADDEND1
-    ldr     x3, [x0, #16]  // Assume length at offset 16 of the struct
+    // Load in length of OADDEND1 and OADDEND2
+    ldr     x0, [x0, #16]  // Load length of oAddend1 into x0
+    ldr     x1, [x1, #16]  // Load length of oAddend2 into x1
 
-    // Load in length of OADDEND2
-    ldr     x4, [x1, #16]  // Assume length at offset 16 of the struct
+    // Call BigInt_larger to get the larger length
+    bl      BigInt_larger
+    str     x0, [sp, LSUMLENGTH]
 
-    // Compare lengths and store the larger one
-    cmp     x3, x4
-    bgt    use_first_length
-    mov     x3, x4
-
-use_first_length:
-    str     x3, [sp, LSUMLENGTH]
-
-    // Check if the larger length is 0, means both equal zero
-    cmp     x3, #0
+    // Check if the larger length is 0, which means both are zero
+    cmp     x0, #0
     beq     handle_zero_case
 
     // Clear oSum's array if necessary
@@ -74,22 +84,13 @@ use_first_length:
 
     // Compare oSum->lLength with lSumLength
     cmp     x6, x3
-    ble    skip_clear  // if oSum->lLength <= lSumLength, skip  clearing
+    ble     skip_clear  // If oSum->lLength <= lSumLength, skip clearing
 
     // Clear oSum array
     // aulDigits is at offset #24 in the struct
     add     x5, x5, #24  // Address of oSum->aulDigits
     mov     x7, #0       // Zero to clear array
     mov     x8, #MAX_DIGITS
-
-handle_zero_case:
-    // If both inputs zero, set the length of oSum to 0 and return TRUE
-    mov     x0, sp
-    add     x0, x0, OSUM
-    mov     x1, #0
-    str     x1, [x0, #16]  // Assume length at offset 16 of the struct
-    mov     x0, TRUE
-    b       func_end
 
 clear_loop:
     str     x7, [x5], #8  // Store 0 and post-increment address by 8
@@ -103,7 +104,7 @@ skip_clear:
         
     // lIndex = 0;
     str     x0, [sp, LINDEX]
-    b loop1
+    b       loop1
 
 loop1:
     // Load lIndex and lSumLength
@@ -197,4 +198,6 @@ func_end:
     ldr     x30, [sp]
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
-    .size BigInt_add, (. - BigInt_add)
+
+.size BigInt_add, (. - BigInt_add)
+.size BigInt_larger, (. - BigInt_larger)
