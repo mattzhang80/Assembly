@@ -167,7 +167,7 @@ loop_start:
         ldr     x0, [sp, LINDEX]
         ldr     x1, [sp, LSUMLENGTH]
         cmp     x0, x1
-        bge     handle_overflow_check
+        bge     loop_end
 
         // ulSum = ulCarry;
         ldr     x0, [sp, ULCARRY]
