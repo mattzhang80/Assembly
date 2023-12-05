@@ -18,6 +18,7 @@
     // Constants
     .equ    TRUE, 1
     .equ    FALSE, 0
+    .equ    MAX_DIGITS, 100
     .equ    SIZE_OF_UL, 8
         
     // Local Variable Stack Offsets
