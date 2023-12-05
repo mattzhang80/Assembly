@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------
 .section .text
-.equ    ADD_STACK_BYTECOUNT, 96
+.equ    ADD_STACK_BYTECOUNT, 112
 .equ    TRUE, 1
 .equ    FALSE, 0
 .equ    MAX_DIGITS, 100
