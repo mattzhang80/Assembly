@@ -90,7 +90,7 @@ handle_zero_case:
     	mov     x1, #0
     	str     x1, [x0, #16]  // Assuming the length is at offset 16 of the struct
     	mov     x0, TRUE
-    	b       add_end
+    	b       func_end
 
 clear_loop:
     str     x7, [x5], #8  // Store 0 and post-increment address by 8
