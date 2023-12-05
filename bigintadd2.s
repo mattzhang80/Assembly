@@ -92,7 +92,7 @@ handle_zero_case:
     	b       func_end
 
 clear_loop:
-    str     x7, [x5], SIZE_OF_UL // Store 0 and post-increment address by 8
+    str     x7, [x5], #8  // Store 0 and post-increment address by 8
     subs    x8, x8, #1    // Decrement counter
     b.ne    clear_loop    // If counter not zero, continue loop
 
@@ -172,7 +172,7 @@ endloop1:
     str     x5, [sp, LSUMLENGTH]
 
     lsl     x9, x5, #3
-    sub     x9, x9, SIZE_OF_UL
+    sub     x9, x9, #8
     mov     x10, #1
     str     x10, [x8, x9]            // Store 1 at oSum->aulDigits[lSumLength - 1]
 
