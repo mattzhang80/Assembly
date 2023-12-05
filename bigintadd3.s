@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------
 .section .text
-.equ    ADD_STACK_BYTECOUNT, 80
+.equ    ADD_STACK_BYTECOUNT, 96
 .equ    TRUE, 1
 .equ    FALSE, 0
 .equ    MAX_DIGITS, 100
@@ -114,7 +114,7 @@ handle_zero_case:
     str     x1, [x0, #16]  // Assume length at offset 16 of the struct
     mov     x0, TRUE
     b       func_end
-    
+
 loop1:
     // Load lIndex and lSumLength
     ldr     x4, [sp, LINDEX]       // x4 = lIndex
