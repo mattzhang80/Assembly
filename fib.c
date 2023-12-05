@@ -414,6 +414,11 @@ static void stressTest(void)
       BigInt_random(oSecond);
       printf("Stress test %db: ", i); 
       fflush(stdout);
+      printf(oFirst);
+      BigInt_writeHexAbbrev(stdout, oFirst);
+      BigInt_writeHexAbbrev(stdout, oSum);
+      BigInt_writeHexAbbrev(stdout, oSecond);
+
       if (BigInt_add(oFirst, oSum, oSecond))
          BigInt_writeHexAbbrev(stdout, oSecond);
       else
