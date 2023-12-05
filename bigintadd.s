@@ -200,6 +200,14 @@ loop_start:
         // goto add_if1;
         b       add_if1
 
+		// Increment lIndex
+    	ldr     x0, [sp, LINDEX]
+    	add     x0, x0, #1
+    	str     x0, [sp, LINDEX]
+
+    	// Jump back to start of loop
+    	b       loop_start
+
 add_if1:
         // ulSum += oAddend2->aulDigits[lIndex];
         ldr     x0, [sp, ULSUM]
