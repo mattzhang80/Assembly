@@ -101,29 +101,28 @@ larger_end:
         .global BigInt_add
 
 BigInt_add: 
-        // Prologue
-        sub     sp, sp, ADD_STACK_BYTECOUNT
-        str     x30, [sp]
+    	// Prologue
+    	sub     sp, sp, ADD_STACK_BYTECOUNT
+    	str     x30, [sp]
 
-        // Initialize Parameters
-        str     x0, [sp, OADDEND1]
-        str     x1, [sp, OADDEND2]
-        str     x2, [sp, OSUM]
-        
-        // Load in length of OADDEND1
-        mov     x0, sp
-        add     x0, x0, #40
-        ldr     x0, [x0]
+    	// Initialize Parameters
+    	str     x0, [sp, OADDEND1]
+    	str     x1, [sp, OADDEND2]
+    	str     x2, [sp, OSUM]
+    
+    	// Load in length of OADDEND1
+    	ldr     x0, [x0, #16]  // Assuming the length is at offset 16 of the struct
 
-        // Load in length of OADDEND2
-        mov     x1, sp
-        add     x1, x1, #48
-        ldr     x1, [x1]
-        
-        // LSUMLENGTH = BigInt_larger(oAddend1->lLength,
-        // oAddend2->lLength)
-        bl BigInt_larger
-        str x0, [sp, LSUMLENGTH]
+    	// Load in length of OADDEND2
+    	ldr     x1, [x1, #16]  // Assuming the length is at offset 16 of the struct
+
+    	// Call BigInt_larger to get the larger length
+    	bl      BigInt_larger
+    	str     x0, [sp, LSUMLENGTH]
+
+    	// Check if the larger length is 0, which means both are zero
+    	cmp     x0, #0
+    	beq     handle_zero_case
         
         // if (oSum->lLength <= lSumLength) goto before;
         mov     x0, sp
@@ -296,6 +295,16 @@ add_if4:
 
         .size BigInt_add, (. - BigInt_add)
         
+handle_zero_case:
+    	// If both inputs are zero, set the length of oSum to 0 and return TRUE
+    	mov     x0, sp
+    	add     x0, x0, OSUM
+    	mov     x1, #0
+    	str     x1, [x0, #16]  // Assuming the length is at offset 16 of the struct
+    	mov     x0, TRUE
+    	b       end_function
+
+
 add_end:
         // Epilogue and return TRUE
         mov x0, TRUE
@@ -304,3 +313,4 @@ add_end:
         ret
 
         .size BigInt_add, (. - BigInt_add)
+
