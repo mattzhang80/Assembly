@@ -1,9 +1,9 @@
-; This code assumes that the function arguments are stored in the following registers:
-; oAddend1: rdi
-; oAddend2: rsi
-; oSum: rdx
+// This code assumes that the function arguments are stored in the following registers:
+// oAddend1: rdi
+// oAddend2: rsi
+// oSum: rdx
 
-; Prologue
+// Prologue
 push rbp
 mov rbp, rsp
 
@@ -13,7 +13,7 @@ mov ulSum, 0
 mov lIndex, 0
 mov lSumLength, 0
 
-; Check for NULL pointers
+// Check for NULL pointers
 cmp oAddend1, rax
 je error1
 cmp oAddend2, rax
@@ -25,7 +25,7 @@ je error4
 cmp oSum, oAddend2
 je error5
 
-; Determine the larger length
+// Determine the larger length
 cmp oAddend1->lLength, oAddend2->lLength
 jl greater_oAddend2
 mov lSumLength, oAddend1->lLength
@@ -36,7 +36,7 @@ mov lSumLength, oAddend2->lLength
 
 done_length_comparison:
 
-; Clear oSum's array if necessary
+// Clear oSum's array if necessary
 cmp oSum->lLength, lSumLength
 jl skip_clear_oSum
 mov rcx, MAX_DIGITS
@@ -46,7 +46,7 @@ rep stosb
 
 skip_clear_oSum:
 
-; Perform the addition
+// Perform the addition
 loop1:
 cmp lIndex, lSumLength
 jge endloop1
@@ -68,7 +68,7 @@ jmp loop1
 
 endloop1:
 
-; Check for a carry out of the last "column" of the addition
+// Check for a carry out of the last "column" of the addition
 cmp ulCarry, 1
 jne endif1
 
@@ -80,10 +80,10 @@ inc lSumLength
 
 endif1:
 
-; Set the length of the sum
+// Set the length of the sum
 mov oSum->lLength, lSumLength
 
-; Return TRUE
+// Return TRUE
 mov rax, 1
 leave
 ret
