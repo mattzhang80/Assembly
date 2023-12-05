@@ -124,13 +124,13 @@ BigInt_add:
     	cmp     x0, #0
     	beq     handle_zero_case
         
-        // if (oSum->lLength <= lSumLength) goto before;
+        // if (oSum->lLength > lSumLength) goto before;
         mov     x0, sp
         add     x0, x0, #56
         ldr     x0, [x0]
         ldr     x1, [sp, LSUMLENGTH]
-        cmp     x0, x1
-        ble     before
+        cmp     x1, x0
+        bgt     	before
 
         // STORE oSum->aulDigits in a register
         mov     x0, sp
