@@ -100,7 +100,7 @@ larger_end:
         // BigIntAdd Function
         .global BigInt_add
 
-BigInt_add: 
+BigInt_add:
     	// Prologue
     	sub     sp, sp, ADD_STACK_BYTECOUNT
     	str     x30, [sp]
@@ -109,14 +109,11 @@ BigInt_add:
     	str     x0, [sp, OADDEND1]
     	str     x1, [sp, OADDEND2]
     	str     x2, [sp, OSUM]
-    
-    	// Load in length of OADDEND1
-    	ldr     x0, [x0, #16]  // Assuming the length is at offset 16 of the struct
 
-    	// Load in length of OADDEND2
-    	ldr     x1, [x1, #16]  // Assuming the length is at offset 16 of the struct
-
-    	// Call BigInt_larger to get the larger length
+    	// Load in lengths of OADDEND1 and OADDEND2, and call BigInt_larger
+    	// Assuming the length is at offset 16 of the struct
+    	ldr     x0, [x0, #16]
+    	ldr     x1, [x1, #16]
     	bl      BigInt_larger
     	str     x0, [sp, LSUMLENGTH]
 
@@ -146,6 +143,11 @@ BigInt_add:
         // Store #0 in x1
         mov     x1, #0
 
+		// Initialize ulCarry and lIndex
+    	mov     x0, #0
+    	str     x0, [sp, ULCARRY]
+    	str     x0, [sp, LINDEX]
+
         // Execute the memset() function
         bl      memset
 
@@ -165,7 +167,7 @@ loop_start:
         ldr     x0, [sp, LINDEX]
         ldr     x1, [sp, LSUMLENGTH]
         cmp     x0, x1
-        bge     loop_end
+        bge     handle_overflow_check
 
         // ulSum = ulCarry;
         ldr     x0, [sp, ULCARRY]
@@ -257,6 +259,10 @@ loop_end:
         cmp     x0, MAX_DIGITS
         bne     add_if4
 
+		 // Increment lSumLength and set the carry digit
+    	add     x1, x1, #1
+    	str     x1, [sp, LSUMLENGTH]
+		
         // oSum->aulDigits[lSumLength] = 1;
         mov     x0, sp
         add     x0, x0, #56
@@ -283,17 +289,14 @@ add_if3:
         ldr     x1, [sp, LSUMLENGTH]
         str     x1, [x0]
 
-        // goto add_end;
-        b       add_end
+        // Return TRUE and finish
+    	mov     x0, TRUE
+    	b       add_end
 
 add_if4:
-        // Epilogue and return FALSE
-        mov x0, FALSE
-        ldr x30, [sp]
-        add sp, sp, ADD_STACK_BYTECOUNT
-        ret
-
-        .size BigInt_add, (. - BigInt_add)
+        // Return FALSE due to overflow
+    	mov     x0, FALSE
+    	b       add_end
         
 handle_zero_case:
     	// If both inputs are zero, set the length of oSum to 0 and return TRUE
