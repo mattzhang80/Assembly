@@ -13,6 +13,8 @@
 
 //----------------------------------------------------------------------
 .section .text
+    .equ    ADD_STACK_BYTECOUNT, 64
+
     // Constants
     .equ    TRUE, 1
     .equ    FALSE, 0
@@ -32,7 +34,7 @@
 
 .global BigInt_add
     .type BigInt_add, @function
-    
+
 BigInt_add: 
     // Prologue
     sub     sp, sp, ADD_STACK_BYTECOUNT
