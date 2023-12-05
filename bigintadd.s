@@ -167,7 +167,7 @@ loop_start:
         ldr     x0, [sp, LINDEX]
         ldr     x1, [sp, LSUMLENGTH]
         cmp     x0, x1
-        bge     loop_end
+        bge     handle_overflow_check
 
         // ulSum = ulCarry;
         ldr     x0, [sp, ULCARRY]
@@ -316,4 +316,4 @@ add_end:
         ret
 
         .size BigInt_add, (. - BigInt_add)
-
+		
