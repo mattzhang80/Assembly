@@ -77,4 +77,3 @@ set_sumlength:
    oSum->lLength = lSumLength;
    return TRUE;
 }
-
