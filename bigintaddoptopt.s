@@ -165,6 +165,10 @@ add_if1:
     // No carry, skip to storing sum
     b       store_sum
 
+add_if2:
+    // Carry occurred, set carry
+    mov     ULCARRY, #1
+
 store_sum:
     // Carry occurred, set carry
     mov     ULCARRY, #1
