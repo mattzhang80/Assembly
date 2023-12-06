@@ -273,8 +273,8 @@ add_if4:
 set_sumlength:
 	// oSum->lLength = lSumLength;
         ldr     x0, [sp, OSUM]
-        ldr     x1, [sp, LSUMLENGTH]
-        str     x1, [x0, SIZE_OF_UL]
+        str     x1, [sp, LSUMLENGTH]
+        str     x1, [x0]
 
 add_end:
         // Epilogue and return TRUE
