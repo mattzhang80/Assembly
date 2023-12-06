@@ -75,7 +75,6 @@ loop_end_cont:
 
 set_sumlength:
    oSum->lLength = lSumLength;
-
-return TRUE;
+   return TRUE;
 }
 

@@ -265,10 +265,10 @@ set_sumlength:
         ldr     x0, [sp, OSUM]
         ldr     x1, [sp, LSUMLENGTH]
         str     x1, [x0]
+        mov x0, TRUE
 
 add_end:
         // Epilogue and return TRUE
-        mov x0, TRUE
         ldr x30, [sp]
         add sp, sp, ADD_STACK_BYTECOUNT
         ret
