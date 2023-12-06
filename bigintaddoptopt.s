@@ -230,6 +230,8 @@ add_end:
         ldr     x24, [sp, 48]
         ldr     x25, [sp, 56]
         ldr     x26, [sp, 64]
+        ldr     x27, [sp, 72]
+        ldr     x28, [sp, 80]
         add     sp, sp, ADD_STACK_BYTECOUNT
         ret
         
