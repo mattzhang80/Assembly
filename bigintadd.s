@@ -45,10 +45,10 @@ BigInt_add:
     str     x2, [sp, OSUM]
 
     // Load in length of OADDEND1
-    ldr     x3, [x0, #16]  // Assume length at offset 16 of the struct
+    ldr     x3, [x0]  // Assume length at offset 16 of the struct
 
     // Load in length of OADDEND2
-    ldr     x4, [x1, #16]  // Assume length at offset 16 of the struct
+    ldr     x4, [x1]  // Assume length at offset 16 of the struct
 
     // Compare lengths and store the larger one
     cmp     x3, x4
@@ -118,16 +118,18 @@ loop1:
     ldr     x6, [sp, ULCARRY]      // x6 = ulCarry
 
     // Calculate address offset for array indexing (x4 * 8)
-    mov     x7, x4
-    lsl     x7, x7, #3             // x7 = lIndex * 8 
+	mov     x7, x4
+	lsl     x7, x7, #3             // x7 = lIndex * 8 
 
-    // Load oAddend1->aulDigits[lIndex]
-    ldr     x8, [sp, OADDEND1]     // Load oAddend1 pointer
-    ldr     x8, [x8, x7]           // Load oAddend1->aulDigits[lIndex]
+	// Load oAddend1->aulDigits[lIndex]
+	ldr     x8, [sp, OADDEND1]     // Load oAddend1 pointer
+	ldr     x8, [x8, x7]           // Load oAddend1->aulDigits[lIndex]
 
-    // Load oAddend2->aulDigits[lIndex]
-    ldr     x9, [sp, OADDEND2]     // Load oAddend2 pointer
-    ldr     x9, [x9, x7]           // Load oAddend2->aulDigits[lIndex]
+	// Load oAddend2->aulDigits[lIndex] - Revised
+	ldr     x10, [sp, OADDEND2]    // Load oAddend2 pointer
+	add     x10, x10, x7           // Calculate address of oAddend2->aulDigits[lIndex]
+	add     x10, x10, #24          // Adjust for the offset of aulDigits within the structure
+	ldr     x9, [x10]              // Load the value from oAddend2->aulDigits[lIndex] into x9
 
     // ulSum = ulCarry + oAddend1->aulDigits[lIndex] + 
     // oAddend2->aulDigits[lIndex]
