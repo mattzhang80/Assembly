@@ -52,7 +52,7 @@ BigInt_add:
 
     // Compare lengths and store the larger one
     cmp     x3, x4
-    bgt    use_first_length
+    b.gt    use_first_length
     mov     x3, x4
 
 use_first_length:
@@ -94,7 +94,7 @@ handle_zero_case:
 clear_loop:
     str     x7, [x5], #8  // Store 0 and post-increment address by 8
     subs    x8, x8, #1    // Decrement counter
-    bne    clear_loop    // If counter not zero, continue loop
+    b.ne    clear_loop    // If counter not zero, continue loop
 
 skip_clear:
     // ulCarry = 0;
