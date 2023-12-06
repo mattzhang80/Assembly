@@ -223,10 +223,11 @@ loop_end:
         // if (ulCarry != 1) goto set_sumlength;
         ldr     x0, [sp, ULCARRY]
         cmp     x0, #1
-        bne     return_false
+        bne     set_sumlength
 
-        // if (LSUMLENGTH != MAX_DIGITS) goto add_end;
+   		if (lSumLength != MAX_DIGITS) return FALSE;
         ldr     x0, [sp, LSUMLENGTH]
+		mov 	x0, FALSE
         cmp     x0, MAX_DIGITS
         bne     add_end
 
@@ -260,5 +261,3 @@ add_end:
 
         .size   BigInt_larger, (. - BigInt_larger)
         .size BigInt_add, (. - BigInt_add)
-
-return_false: 
