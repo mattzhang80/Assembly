@@ -123,7 +123,7 @@ BigInt_add:
 
     	// Check if the larger length is 0, which means both are zero
     	// cmp     x0, #0
-    	// beq     handle_zero_case
+    	 beq     handle_zero_case
         
         // if (oSum->lLength <= lSumLength) goto before;
         ldr     x0, [sp, OSUM]
@@ -273,12 +273,12 @@ add_if4:
         // goto epilogue;
         b       add_end
         
-// handle_zero_case:
+	handle_zero_case:
     	// If both inputs are zero, set the length of oSum to 0 and return TRUE
-    	// ldr     x0, [sp, OSUM]
-    	// mov     x1, #0
-    	// str     x1, [x0]
-    	// b       add_end
+    	ldr     x0, [sp, OSUM]
+    	mov     x1, #0
+    	str     x1, [x0]
+    	b       add_end
 
 
 add_end:
