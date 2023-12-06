@@ -127,13 +127,14 @@ loop1:
 
 	// Load oAddend1->aulDigits[lIndex]
 	ldr     x8, [sp, OADDEND1]     // Load oAddend1 pointer
+	add     x8, x8, 8            // Calculate address of oAddend1->aulDigits[lIndex]
 	ldr     x8, [x8, x7]           // Load oAddend1->aulDigits[lIndex]
 
 	// Load oAddend2->aulDigits[lIndex] - Revised
 	ldr     x10, [sp, OADDEND2]    // Load oAddend2 pointer
-	add     x10, x10, x7           // Calculate address of oAddend2->aulDigits[lIndex]
+	//add     x10, x10, x7           // Calculate address of oAddend2->aulDigits[lIndex]
 	add     x10, x10, 8          // Adjust for the offset of aulDigits within the structure
-	ldr     x9, [x10]              // Load the value from oAddend2->aulDigits[lIndex] into x9
+	ldr     x9, [x10, x7]              // Load the value from oAddend2->aulDigits[lIndex] into x9
 
     // ulSum = ulCarry + oAddend1->aulDigits[lIndex] + 
     // oAddend2->aulDigits[lIndex]
