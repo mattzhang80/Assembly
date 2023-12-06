@@ -159,7 +159,7 @@ loop_start:
         bge     loop_end
 
         // ulSum = ulCarry;
-        str     ULCARRY, [ULSUM]
+        mov     ULCARRY, ULSUM
 
         // ulCarry = 0;
         mov     ULCARRY, #0
