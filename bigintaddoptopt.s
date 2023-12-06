@@ -125,9 +125,8 @@ after_memset:
         // lIndex = 0;
         mov     LINDEX, #0
 
-        // if (lIndex >= lSumLength) goto loop_end;
-        cmp     LINDEX, LSUMLENGTH
-        bge     loop_end
+        // Jump to condition check at the end of the loop
+        b       loop_condition_check
 
 loop_start:
 
@@ -151,25 +150,25 @@ loop_start:
         // ULCARRY = 1;
         mov     ULCARRY, #1
 
-        b add_if1
-
 add_if1:
-        // ulSum += oAddend2->aulDigits[lIndex];
-        add     x1, OADDEND2, SIZE_OF_UL
-        lsl     x2, LINDEX, #3
-        add     x1, x1, x2
-        ldr     x1, [x1]
-        add     ULSUM, ULSUM, x1
+    // ulSum += oAddend2->aulDigits[lIndex];
+    add     x1, OADDEND2, SIZE_OF_UL
+    lsl     x2, LINDEX, #3
+    add     x1, x1, x2
+    ldr     x1, [x1]
+    add     ULSUM, ULSUM, x1
 
-        // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
-        cmp     ULSUM, x1
-        bhs     add_if2
+    // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
+    cmp     ULSUM, x1
+    bhs     add_if2
 
-        // ulCarry = 1;
-        mov     ULCARRY, #1
+    // No carry, skip to storing sum
+    b       store_sum
 
 add_if2:
-        // oSum->aulDigits[lIndex] = ulSum;
+    // Carry occurred, set carry
+    mov     ULCARRY, #1
+    // oSum->aulDigits[lIndex] = ulSum;
         add     x1, OSUM, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
@@ -178,9 +177,10 @@ add_if2:
         // lIndex++;
         add     LINDEX, LINDEX, #1
         
-        // if (lIndex < lSumLength) goto loop_end;
-        cmp    LINDEX, LSUMLENGTH
-        bl     loop_start
+loop_condition_check:
+        // Check if loop should continue
+        cmp     LINDEX, LSUMLENGTH
+        blt     loop_start
 
 loop_end:
         // if (ulCarry != 1) goto set_sumlength;
@@ -190,7 +190,7 @@ loop_end:
    	// if (lSumLength == MAX_DIGITS) return FALSE;
         cmp     LSUMLENGTH, MAX_DIGITS
         beq     ret_false
-
+a
         // oSum->aulDigits[lSumLength] = 1;
         add     x0, OSUM, SIZE_OF_UL
         lsl     x1, LSUMLENGTH, #3
