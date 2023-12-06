@@ -122,8 +122,8 @@ BigInt_add:
     	str     x0, [sp, LSUMLENGTH]
 
     	// Check if the larger length is 0, which means both are zero
-    	 cmp     x0, #0
-    	 beq     handle_zero_case
+    	// cmp     x0, #0
+    	// beq     handle_zero_case
         
         // if (oSum->lLength <= lSumLength) goto before;
         ldr     x0, [sp, OSUM]
@@ -238,10 +238,10 @@ add_if2:
         b       loop_start
 
 loop_end:
-        // if (ulCarry != 1) goto add_if3;
+        // if (ulCarry != 1) goto set_sumlength;
         ldr     x0, [sp, ULCARRY]
         cmp     x0, #1
-        bne     add_end
+        bne     set_sumlength
 
         // if (LSUMLENGTH != MAX_DIGITS) goto add_if4;
         ldr     x0, [sp, LSUMLENGTH]
@@ -257,7 +257,7 @@ loop_end:
 add_if4:
         // oSum->aulDigits[lSumLength] = 1;
         ldr     x0, [sp, OSUM]
-        add     x0, x0, #8
+        add     x0, x0, SIZE_OF_UL
         ldr     x1, [sp, LSUMLENGTH]
         lsl     x1, x1, #3
         add     x0, x0, x1
@@ -270,23 +270,13 @@ add_if4:
         add     x0, x0, x1
         str     x0, [sp, LSUMLENGTH]
 
-        // goto epilogue;
-        b       add_end
-        
-	handle_zero_case:
-    	// If both inputs are zero, set the length of oSum to 0 and return TRUE
-    	ldr     x0, [sp, OSUM]
-    	mov     x1, #0
-    	str     x1, [x0]
-    	b       add_end
-
+set_sumlength:
+	// oSum->lLength = lSumLength;
+        ldr     x0, [sp, OSUM]
+        ldr     x1, [sp, LSUMLENGTH]
+        str     x1, [x0, SIZE_OF_UL]
 
 add_end:
-		// oSum->lLength = lSumLength;
-        ldr     x0, [sp, OSUM]
-        str     x1, [sp, LSUMLENGTH]
-        str     x1, [x0]
-
         // Epilogue and return TRUE
         mov x0, TRUE
         ldr x30, [sp]
