@@ -170,16 +170,18 @@ add_if2:
     mov     ULCARRY, #1
 
 store_sum:
-    // Carry occurred, set carry
-    mov     ULCARRY, #1
     // oSum->aulDigits[lIndex] = ulSum;
-        add     x1, OSUM, SIZE_OF_UL
-        lsl     x2, LINDEX, #3
-        add     x1, x1, x2
-        str     ULSUM, [x1]
+    add     x1, OSUM, SIZE_OF_UL   
+    lsl     x2, LINDEX, #3         
+    add     x1, x1, x2             
+    str     ULSUM, [x1]            
+    
+    // Prepare for the next iteration
+    add     LINDEX, LINDEX, #1     // Increment index for the next digit
 
-        // lIndex++;
-        add     LINDEX, LINDEX, #1
+    // Continue to loop condition check
+    b       loop_condition_check
+
         
 loop_condition_check:
         // Check if loop should continue
