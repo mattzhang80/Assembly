@@ -18,11 +18,6 @@
         .equ    FALSE, 0
         .equ    MAX_DIGITS, 32768
         .equ    SIZE_OF_UL, 8
-    
-        
-larger_if1:
-        // LLARGER = LLENGTH2;
-        mov     LLARGER, LLENGTH2
         
         //--------------------------------------------------------------
         // Assign the sum of oAddend1 and oAddend2 to oSum. oSum should
