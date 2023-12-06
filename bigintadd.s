@@ -241,7 +241,7 @@ loop_end:
         // if (ulCarry != 1) goto add_if3;
         ldr     x0, [sp, ULCARRY]
         cmp     x0, #1
-        bne     add_if3
+        bne     add_end
 
         // if (LSUMLENGTH != MAX_DIGITS) goto add_if4;
         ldr     x0, [sp, LSUMLENGTH]
@@ -253,15 +253,6 @@ loop_end:
         ldr     x30, [sp]
         add     sp, sp, ADD_STACK_BYTECOUNT
         ret
-        
-add_if3:
-        // oSum->lLength = lSumLength;
-        ldr     x0, [sp, OSUM]
-        str     x1, [sp, LSUMLENGTH]
-        str     x1, [x0]
-
-        // goto add_end;
-        b       add_end
 
 add_if4:
         // oSum->aulDigits[lSumLength] = 1;
@@ -291,6 +282,11 @@ add_if4:
 
 
 add_end:
+		// oSum->lLength = lSumLength;
+        ldr     x0, [sp, OSUM]
+        str     x1, [sp, LSUMLENGTH]
+        str     x1, [x0]
+
         // Epilogue and return TRUE
         mov x0, TRUE
         ldr x30, [sp]
