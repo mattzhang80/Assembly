@@ -233,7 +233,7 @@ loop_end:
         cmp     x0, #1
         bne     set_sumlength
 
-        // if (LSUMLENGTH != MAX_DIGITS) goto add_if4;
+        // if (LSUMLENGTH != MAX_DIGITS) goto loop_end_cont;
         ldr     x0, [sp, LSUMLENGTH]
         cmp     x0, MAX_DIGITS
         bne     loop_end_cont
