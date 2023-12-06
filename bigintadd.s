@@ -12,12 +12,12 @@
 
 //----------------------------------------------------------------------
 .section .text
-    .equ    ADD_STACK_BYTECOUNT, 80
+    .equ    ADD_STACK_BYTECOUNT, 64
 
     // Constants
     .equ    TRUE, 1
     .equ    FALSE, 0
-    .equ    MAX_DIGITS, 100
+    .equ    MAX_DIGITS, 32768
     .equ    SIZE_OF_UL, 8
         
     // Local Variable Stack Offsets
@@ -198,4 +198,3 @@ func_end:
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
     .size BigInt_add, (. - BigInt_add)
-	
