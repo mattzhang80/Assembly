@@ -195,7 +195,7 @@ add_if2:
         add     x1, OSUM, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
-        mov     x1, ULSUM
+        str     ULSUM, [x1]
 
         // lIndex++;
         add     LINDEX, LINDEX, #1
