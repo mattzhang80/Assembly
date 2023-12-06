@@ -118,7 +118,6 @@ BigInt_add:
     	ldr     x1, [x1]
 
     	// Call BigInt_larger to get the larger length
-		cmp 	x0, x1
     	bl      BigInt_larger
     	str     x0, [sp, LSUMLENGTH]
 
@@ -267,23 +266,11 @@ add_if3:
         b       add_end
 
 add_if4:
-        // oSum->aulDigits[lSumLength] = 1;
-        ldr     x0, [sp, OSUM]
-        add     x0, x0, #8
-        ldr     x1, [sp, LSUMLENGTH]
-        lsl     x1, x1, #3
-        add     x0, x0, x1
-        mov     x2, #1
-        str     x2, [x0]
-        
-        // lSumLength++;
-        ldr     x0, [sp, LSUMLENGTH]
-        mov     x1, #1
-        add     x0, x0, x1
-        str     x0, [sp, LSUMLENGTH]
+        mov x0, FALSE
+		ret
 
-        // goto add_if3;
-        b       add_if3
+        // goto epilogue;
+        b       add_end
         
 // handle_zero_case:
     	// If both inputs are zero, set the length of oSum to 0 and return TRUE
