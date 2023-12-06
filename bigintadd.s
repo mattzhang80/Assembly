@@ -273,7 +273,7 @@ add_if4:
 set_sumlength:
 	// oSum->lLength = lSumLength;
         ldr     x0, [sp, OSUM]
-        str     x1, [sp, LSUMLENGTH]
+        ldr     x1, [sp, LSUMLENGTH]
         str     x1, [x0]
 
 add_end:
