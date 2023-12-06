@@ -151,22 +151,24 @@ loop_start:
         mov     ULCARRY, #1
 
 add_if1:
-        // ulSum += oAddend2->aulDigits[lIndex];
-        add     x1, OADDEND2, SIZE_OF_UL
-        lsl     x2, LINDEX, #3
-        add     x1, x1, x2
-        ldr     x1, [x1]
-        add     ULSUM, ULSUM, x1
+    // ulSum += oAddend2->aulDigits[lIndex];
+    add     x1, OADDEND2, SIZE_OF_UL
+    lsl     x2, LINDEX, #3
+    add     x1, x1, x2
+    ldr     x1, [x1]
+    add     ULSUM, ULSUM, x1
 
-        // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
-        cmp     ULSUM, x1
-        bhs     add_if2
+    // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
+    cmp     ULSUM, x1
+    bhs     add_if2
 
-        // ulCarry = 1;
-        mov     ULCARRY, #1
+    // No carry, skip to storing sum
+    b       store_sum
 
 add_if2:
-        // oSum->aulDigits[lIndex] = ulSum;
+    // Carry occurred, set carry
+    mov     ULCARRY, #1
+    // oSum->aulDigits[lIndex] = ulSum;
         add     x1, OSUM, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
@@ -188,7 +190,7 @@ loop_end:
    	// if (lSumLength == MAX_DIGITS) return FALSE;
         cmp     LSUMLENGTH, MAX_DIGITS
         beq     ret_false
-
+a
         // oSum->aulDigits[lSumLength] = 1;
         add     x0, OSUM, SIZE_OF_UL
         lsl     x1, LSUMLENGTH, #3
