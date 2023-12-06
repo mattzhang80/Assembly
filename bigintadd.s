@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------
 .section .text
-    .equ    ADD_STACK_BYTECOUNT, 112
+    .equ    ADD_STACK_BYTECOUNT, 80
 
     // Constants
     .equ    TRUE, 1
@@ -52,7 +52,7 @@ BigInt_add:
 
     // Compare lengths and store the larger one
     cmp     x3, x4
-    b.gt    use_first_length
+    bgt    use_first_length
     mov     x3, x4
 
 use_first_length:
@@ -198,3 +198,4 @@ func_end:
     add     sp, sp, ADD_STACK_BYTECOUNT
     ret
     .size BigInt_add, (. - BigInt_add)
+	
