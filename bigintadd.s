@@ -21,6 +21,7 @@
     .equ    SIZE_OF_UL, 8
         
     // Local Variable Stack Offsets
+	.equ 	LLENGTH, 0
     .equ    ULCARRY, 8 
     .equ    ULSUM, 16
     .equ    LINDEX, 24
@@ -45,10 +46,10 @@ BigInt_add:
     str     x2, [sp, OSUM]
 
     // Load in length of OADDEND1
-    ldr     x3, [x0]  // Assume length at offset 16 of the struct
+    ldr     x3, [x0, #16]  // Assume length at offset 16 of the struct
 
     // Load in length of OADDEND2
-    ldr     x4, [x1]  // Assume length at offset 16 of the struct
+    ldr     x4, [x1, #15]  // Assume length at offset 16 of the struct
 
     // Compare lengths and store the larger one
     cmp     x3, x4
@@ -70,10 +71,10 @@ use_first_length:
     ldr     x5, [sp, OSUM]
 
     // Load oSum->lLength
-    ldr     x6, [x5, #16]  // Assume lLength at offset 16
-
+	add     x5, x5, lLength  // Address of oSum->lLength
+	
     // Compare oSum->lLength with lSumLength
-    cmp     x6, x3
+    cmp     x5, x3
     ble    skip_clear  // if oSum->lLength <= lSumLength, skip  clearing
 
     // Clear oSum array
@@ -186,7 +187,8 @@ endloop1:
 endif1:
     ldr     x5, [sp, LSUMLENGTH]     // Load lSumLength
     ldr     x8, [sp, OSUM]           // Load oSum pointer
-    str     x5, [x8, #16]           // Store lSumLength at oSum->lLength
+	add     x8, x8, LLENGTH              // Address of oSum->lLength
+    str     x5, [x8]           // Store lSumLength at oSum->lLength
 
     mov     x0, #TRUE
     b       func_end
