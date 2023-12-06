@@ -125,10 +125,11 @@ after_memset:
         // lIndex = 0;
         mov     LINDEX, #0
 
-loop_start:
         // if (lIndex >= lSumLength) goto loop_end;
         cmp     LINDEX, LSUMLENGTH
         bge     loop_end
+
+loop_start:
 
         // ulSum = ulCarry;
         mov     ULSUM, ULCARRY
@@ -177,8 +178,9 @@ add_if2:
         // lIndex++;
         add     LINDEX, LINDEX, #1
         
-        // goto loop_start;
-        b       loop_start
+        // if (lIndex >= lSumLength) goto loop_end;
+        cmp     LINDEX, LSUMLENGTH
+        bge     loop_end
 
 loop_end:
         // if (ulCarry != 1) goto set_sumlength;
