@@ -52,7 +52,7 @@ BigInt_larger:
         ble     larger_if1
 
         // LLARGER = LLENGTH1;
-        str     LLENGTH1, [LLARGER]
+        mov     LLENGTH1, LLARGER
 
         // goto larger_end;
         b       larger_end
@@ -198,7 +198,7 @@ add_if2:
         add     x1, OSUM, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
-        str     ULSUM, [x1]
+        mov     x1, ULSUM
 
         // lIndex++;
         add     LINDEX, LINDEX, #1
@@ -220,7 +220,7 @@ loop_end:
         lsl     x1, LSUMLENGTH, #3
         add     x0, x0, x1
         mov     x2, #1
-        str     x2, [x0]
+        mov     x0, x2
         
         // lSumLength++;
         add     LSUMLENGTH, LSUMLENGTH, #1
@@ -230,7 +230,7 @@ loop_end:
 
 set_sumlength:
 	// oSum->lLength = lSumLength;
-        str     LSUMLENGTH, [OSUM]
+        mov     OSUM, LSUMLENGTH
 
         // Store TRUE in x0
         mov     x0, TRUE
