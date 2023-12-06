@@ -121,13 +121,16 @@ before_memset:
 after_memset:
         // ulCarry = 0;
         mov     ULCARRY, #0     
+        
         // lIndex = 0;
         mov     LINDEX, #0
 
-        // Jump to condition check at the end of the loop
-        b       loop_condition_check
+        // if (lIndex >= lSumLength) goto loop_end;
+        cmp     LINDEX, LSUMLENGTH
+        bge     loop_end
 
 loop_start:
+
         // ulSum = ulCarry;
         mov     ULSUM, ULCARRY
 
@@ -148,37 +151,34 @@ loop_start:
         // ULCARRY = 1;
         mov     ULCARRY, #1
 
+        b add_if1
+
 add_if1:
-    // ulSum += oAddend2->aulDigits[lIndex];
-    add     x1, OADDEND2, SIZE_OF_UL
-    lsl     x2, LINDEX, #3
-    add     x1, x1, x2
-    ldr     x1, [x1]
-    add     ULSUM, ULSUM, x1
+        // ulSum += oAddend2->aulDigits[lIndex];
+        add     x1, OADDEND2, SIZE_OF_UL
+        lsl     x2, LINDEX, #3
+        add     x1, x1, x2
+        ldr     x1, [x1]
+        add     ULSUM, ULSUM, x1
 
-    // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
-    cmp     ULSUM, x1
-    bhs     add_if2
+        // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
+        cmp     ULSUM, x1
+        bhs     add_if2
 
-    // No carry, skip to storing sum
-    b       store_sum
+        // ulCarry = 1;
+        mov     ULCARRY, #1
 
 add_if2:
-    // Carry occurred, set carry
-    mov     ULCARRY, #1
+        // oSum->aulDigits[lIndex] = ulSum;
+        add     x1, OSUM, SIZE_OF_UL
+        lsl     x2, LINDEX, #3
+        add     x1, x1, x2
+        str     ULSUM, [x1]
 
-store_sum:
-    // oSum->aulDigits[lIndex] = ulSum;
-    add     x1, OSUM, SIZE_OF_UL   
-    lsl     x2, LINDEX, #3         
-    add     x1, x1, x2             
-    str     ULSUM, [x1]            
-
-    // lIndex++;
-    add     LINDEX, LINDEX, #1    
+        // lIndex++;
+        add     LINDEX, LINDEX, #1
         
-loop_condition_check:
-        // Check if loop should continue
+        // if (lIndex >= lSumLength) goto loop_end;
         cmp     LINDEX, LSUMLENGTH
         bge     loop_end
 
