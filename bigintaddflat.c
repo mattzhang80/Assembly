@@ -37,10 +37,10 @@ int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
 
    lSumLength = BigInt_larger(oAddend1->lLength, oAddend2->lLength);
 
-   if (oSum->lLength <= lSumLength) goto after_memset;
+   if (oSum->lLength <= lSumLength) goto before_memset;
    memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
 
-after_memset:
+before_memset:
    ulCarry = 0;
    lIndex = 0;
 
@@ -66,7 +66,7 @@ add_if2:
 
 loop_end:
    if (ulCarry != 1) goto set_sumlength;
-   if (lSumLength != MAX_DIGITS) return FALSE;
+   if (lSumLength == MAX_DIGITS) return FALSE;
    oSum->aulDigits[lSumLength] = 1;
    lSumLength++;
 
