@@ -73,7 +73,7 @@ use_first_length:
     ldr     x5, [sp, OSUM]
 
     // Load oSum->lLength
-	add     x5, x5, LLENGTH  // Address of oSum->lLength
+	ldr     x5, [x5, LLENGTH]  // Address of oSum->lLength
 	
     // Compare oSum->lLength with lSumLength
     cmp     x5, x3
@@ -81,9 +81,11 @@ use_first_length:
 
     // Clear oSum array
     // aulDigits is at offset #24 in the struct
-    add     x5, x5, 8  // Address of oSum->aulDigits
-    mov     x7, #0       // Zero to clear array
-    mov     x8, #MAX_DIGITS
+    add     x0, x5, 8  // Address of oSum->aulDigits
+    mov     x1, 0       // Zero to clear array
+    mov     x2, MAX_DIGITS*8
+	bl 		memset
+	b 	 	skip_clear
 
 handle_zero_case:
     // If both inputs zero, set the length of oSum to 0 and return TRUE
@@ -97,7 +99,7 @@ handle_zero_case:
 clear_loop:
     str     x7, [x5], #8  // Store 0 and post-increment address by 8
     subs    x8, x8, #1    // Decrement counter
-    b.ne    clear_loop    // If counter not zero, continue loop
+    bne    clear_loop    // If counter not zero, continue loop
 
 skip_clear:
     // ulCarry = 0;
@@ -106,7 +108,6 @@ skip_clear:
         
     // lIndex = 0;
     str     x0, [sp, LINDEX]
-    b loop1
 
 loop1:
     // Load lIndex and lSumLength
