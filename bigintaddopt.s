@@ -59,7 +59,8 @@ BigInt_larger:
         
 larger_if1:
         // LLARGER = LLENGTH2;
-        str     LLENGTH2, [LLARGER]
+        ldr     x0, LLENGTH2
+        str     x0, [LLARGER]
 
         // goto larger_end;
         b       larger_end
