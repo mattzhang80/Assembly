@@ -227,7 +227,7 @@ loop_end:
 
 set_sumlength:
 	// oSum->lLength = lSumLength;
-        mov     LSUMLENGTH, OSUM
+        str     LSUMLENGTH, [OSUM]
 
         // Store TRUE in x0
         mov     x0, TRUE

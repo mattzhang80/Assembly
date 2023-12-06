@@ -52,7 +52,7 @@ BigInt_larger:
         ble     larger_if1
 
         // LLARGER = LLENGTH1;
-        mov     LLENGTH1, LLARGER
+        mov     LLARGER, LLENGTH1
 
         // goto larger_end;
         b       larger_end
@@ -89,16 +89,15 @@ larger_end:
         .equ    ADD_STACK_BYTECOUNT, 64
 
         // Store Local Variables in Callee-Saved Registers
-        LLENGTH .req x19
-        ULCARRY .req x20 
-        ULSUM .req x21
-        LINDEX .req x22
-        LSUMLENGTH .req x23
+        ULCARRY .req x19 
+        ULSUM .req x20
+        LINDEX .req x21
+        LSUMLENGTH .req x22
 
         // Store Parameters in Callee-Saved Registers
-        OADDEND1 .req x24
-        OADDEND2 .req x25
-        OSUM .req x26
+        OADDEND1 .req x23
+        OADDEND2 .req x24
+        OSUM .req x25
         
         // BigIntAdd Function
         .global BigInt_add
@@ -114,23 +113,25 @@ BigInt_add:
         str     x23, [sp, 40]
         str     x24, [sp, 48]
         str     x25, [sp, 56]
-        str     x26, [sp, 64] 
 
     	// Initialize Parameters
     	mov     OADDEND1, x0
         mov     OADDEND2, x1
         mov     OSUM, x2
 
+        // Load in the lengths of both BigInt ADTs
+        ldr     x0, [x0]
+        ldr     x1, [x1]
+        
     	// lSumLength = BigInt_larger(oAddend1->lLength, 
-		// oAddend2->lLength);
+	// oAddend2->lLength);
     	bl      BigInt_larger
-    	mov     x0, LSUMLENGTH
+    	mov     LSUMLENGTH, x0
         
         // if (oSum->lLength <= lSumLength) goto after_memset;
-        cmp     x2, LSUMLENGTH
+        ldr     x0, [OSUM]
+        cmp     x0, LSUMLENGTH
         ble     after_memset
-
-	//memset(oSum->aulDigits,0, MAX_DIGITS * sizeof(unsigned long));
 
         // STORE oSum->aulDigits in a register
         add     x0, OSUM, SIZE_OF_UL     
@@ -159,7 +160,7 @@ loop_start:
         bge     loop_end
 
         // ulSum = ulCarry;
-        mov     ULCARRY, ULSUM
+        mov     ULSUM, ULCARRY
 
         // ulCarry = 0;
         mov     ULCARRY, #0
@@ -168,8 +169,8 @@ loop_start:
         add     x1, OADDEND1, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
-        mov     x1, [x1]
-        add     ULSUM, ULSUM, [x1]
+        ldr     x1, [x1]
+        add     ULSUM, ULSUM, x1
 
         // if (ulSum >= oAddend1->aulDigits[lIndex]) goto add_if1;
         cmp     ULSUM, x1
@@ -198,7 +199,7 @@ add_if2:
         add     x1, OSUM, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
-        mov     x1, ULSUM
+        str     ULSUM, [x1]
 
         // lIndex++;
         add     LINDEX, LINDEX, #1
@@ -220,7 +221,7 @@ loop_end:
         lsl     x1, LSUMLENGTH, #3
         add     x0, x0, x1
         mov     x2, #1
-        mov     x0, x2
+        str     x2, [x0]
         
         // lSumLength++;
         add     LSUMLENGTH, LSUMLENGTH, #1
@@ -230,7 +231,8 @@ loop_end:
 
 set_sumlength:
 	// oSum->lLength = lSumLength;
-        mov     LSUMLENGTH, OSUM
+        mov     x0, OSUM
+        str     LSUMLENGTH, [x0]
 
         // Store TRUE in x0
         mov     x0, TRUE
@@ -255,7 +257,6 @@ add_end:
         ldr     x23, [sp, 40]
         ldr     x24, [sp, 48]
         ldr     x25, [sp, 56]
-        ldr     x26, [sp, 64]
         add     sp, sp, ADD_STACK_BYTECOUNT
         ret
         
