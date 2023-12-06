@@ -124,7 +124,7 @@ BigInt_add:
     	// lSumLength = BigInt_larger(oAddend1->lLength, 
 		// oAddend2->lLength);
     	bl      BigInt_larger
-    	str     x0, [LSUMLENGTH]
+    	mov     x0, [LSUMLENGTH]
         
         // if (oSum->lLength <= lSumLength) goto after_memset;
         cmp     x2, LSUMLENGTH
