@@ -122,7 +122,7 @@ BigInt_add:
     	str     x0, [sp, LSUMLENGTH]
 
     	// Check if the larger length is 0, which means both are zero
-    	// cmp     x0, #0
+    	 cmp     x0, #0
     	 beq     handle_zero_case
         
         // if (oSum->lLength <= lSumLength) goto before;
