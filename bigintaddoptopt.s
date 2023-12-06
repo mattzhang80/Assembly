@@ -124,60 +124,39 @@ after_memset:
         
         // lIndex = 0;
         mov     LINDEX, #0
-loop_cond_check: 
-        // if (lIndex >= lSumLength) goto loop_end;
-        cmp     LINDEX, LSUMLENGTH
-        bge     loop_end
-loop_start:
-        // ulSum = ulCarry;
-        mov     ULSUM, ULCARRY
-
-        // ulCarry = 0;
-        mov     ULCARRY, #0
-
-        // ulSum += oAddend1->aulDigits[lIndex];
-        add     x1, OADDEND1, SIZE_OF_UL
-        lsl     x2, LINDEX, #3
-        add     x1, x1, x2
-        ldr     x1, [x1]
-        add     ULSUM, ULSUM, x1
-
-        // if (ulSum >= oAddend1->aulDigits[lIndex]) goto add_if1;
-        cmp     ULSUM, x1
-        bhs     add_if1
-
-        // ULCARRY = 1;
-        mov     ULCARRY, #1
-
-        b add_if1
-
-add_if1:
-        // ulSum += oAddend2->aulDigits[lIndex];
-        add     x1, OADDEND2, SIZE_OF_UL
-        lsl     x2, LINDEX, #3
-        add     x1, x1, x2
-        ldr     x1, [x1]
-        add     ULSUM, ULSUM, x1
-
-        // if (ulSum >= oAddend2->aulDigits[Index]) goto add_if2;
-        cmp     ULSUM, x1
-        bhs     add_if2
-
-        // ulCarry = 1;
-        mov     ULCARRY, #1
-
-add_if2:
-        // oSum->aulDigits[lIndex] = ulSum;
-        add     x1, OSUM, SIZE_OF_UL
-        lsl     x2, LINDEX, #3
-        add     x1, x1, x2
-        str     ULSUM, [x1]
-
-        // lIndex++;
-        add     LINDEX, LINDEX, #1
         
-        // goto loop_start;
-        b       loop_cond_check
+        // Clear the carry flag before starting the loop
+        mov     ULSUM, #0              // Use ULSUM temporarily to clear the carry
+        adds    ULSUM, ULSUM, #0       // Perform an addition that clears the carry flag
+
+loop_cond_check: 
+    // if (lIndex >= lSumLength) goto loop_end;
+    cmp     LINDEX, LSUMLENGTH
+    bge     loop_end
+
+loop_start:
+    // Load oAddend1's digit
+    add     x1, OADDEND1, SIZE_OF_UL
+    lsl     x2, LINDEX, #3
+    add     x1, x1, x2
+    ldr     x1, [x1]
+
+    // Load oAddend2's digit and add with carry
+    add     x2, OADDEND2, SIZE_OF_UL
+    lsl     x3, LINDEX, #3
+    add     x2, x2, x3
+    ldr     x2, [x2]
+    adcs    ULSUM, x1, x2       // Add both digits and the carry flag
+
+    // Store the result
+    add     x1, OSUM, SIZE_OF_UL
+    lsl     x2, LINDEX, #3
+    add     x1, x1, x2
+    str     ULSUM, [x1]
+
+    // Prepare for next iteration
+    add     LINDEX, LINDEX, #1
+    b       loop_cond_check
 
 loop_end:
         // if (ulCarry != 1) goto set_sumlength;
