@@ -59,10 +59,7 @@ BigInt_larger:
         
 larger_if1:
         // LLARGER = LLENGTH2;
-        mov     LLARGER, LLENGTH2
-
-        // goto larger_end;
-        b       larger_end
+        mov     LLENGTH2, LLARGER
 
 larger_end:
         // Epilogue and return LLARGER
@@ -124,10 +121,10 @@ BigInt_add:
     	// lSumLength = BigInt_larger(oAddend1->lLength, 
 		// oAddend2->lLength);
     	bl      BigInt_larger
-    	mov     x0, LSUMLENGTH
+    	mov     LSUMLENGTH, x0
         
         // if (oSum->lLength <= lSumLength) goto after_memset;
-        cmp     x2, LSUMLENGTH
+        cmp     x2, x0
         ble     after_memset
 
 	//memset(oSum->aulDigits,0, MAX_DIGITS * sizeof(unsigned long));
