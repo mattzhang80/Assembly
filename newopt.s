@@ -216,8 +216,8 @@ loop_end:
         add     x0, OSUM, SIZE_OF_UL
         lsl     x1, LSUMLENGTH, #3
         add     x0, x0, x1
-        str     #1, [x2]
-        mov     x0, x2
+        mov     x2, #1
+        str     x2, [x0]
         
         // lSumLength++;
         add     LSUMLENGTH, LSUMLENGTH, #1
