@@ -66,10 +66,7 @@ add_if2:
 
 loop_end:
    if (ulCarry != 1) goto set_sumlength;
-   if (lSumLength != MAX_DIGITS) goto loop_end_cont;
-   return FALSE;
-
-loop_end_cont:
+   if (lSumLength != MAX_DIGITS) return FALSE;
    oSum->aulDigits[lSumLength] = 1;
    lSumLength++;
 

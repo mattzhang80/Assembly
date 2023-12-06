@@ -62,17 +62,12 @@ larger_if1:
         ldr     x0, [sp, LLENGTH2]
         str     x0, [sp, LLARGER]
 
-        // goto larger_end;
-        b       larger_end
-
 larger_end:
         // Epilogue and return LLARGER
         ldr     x0, [sp, LLARGER]
         ldr     x30, [sp]
         add     sp, sp, LARGER_STACK_BYTECOUNT
         ret
-
-        .size   BigInt_larger, (. - BigInt_larger)
                 
         //--------------------------------------------------------------
         // Assign the sum of oAddend1 and oAddend2 to oSum. oSum should
@@ -117,7 +112,8 @@ BigInt_add:
     	// Load in length of OADDEND2
     	ldr     x1, [x1, LLENGTH]
 
-    	// Call BigInt_larger to get the larger length
+    	// lSumLength = BigInt_larger(oAddend1->lLength, 
+		// oAddend2->lLength);
     	bl      BigInt_larger
     	str     x0, [sp, LSUMLENGTH]
         
@@ -185,9 +181,6 @@ loop_start:
         mov     x0, #1
         str     x0, [sp, ULCARRY]
 
-        // goto add_if1;
-        b       add_if1
-
 add_if1:
         // ulSum += oAddend2->aulDigits[lIndex];
         ldr     x0, [sp, ULSUM]
@@ -204,7 +197,7 @@ add_if1:
         cmp     x0, x1
         bge     add_if2
 
-        // ULCARRY = 1;
+        // ulCarry = 1;
         mov     x0, #1
         str     x0, [sp, ULCARRY]
 
@@ -239,9 +232,7 @@ loop_end:
 
         // Epilogue and return FALSE
         mov     x0, FALSE
-        ldr     x30, [sp]
-        add     sp, sp, ADD_STACK_BYTECOUNT
-        ret
+		goto add_end
 
 loop_end_cont:
         // oSum->aulDigits[lSumLength] = 1;
@@ -272,4 +263,5 @@ add_end:
         add sp, sp, ADD_STACK_BYTECOUNT
         ret
 
+        .size   BigInt_larger, (. - BigInt_larger)
         .size BigInt_add, (. - BigInt_add)
