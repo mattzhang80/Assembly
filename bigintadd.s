@@ -47,11 +47,11 @@ BigInt_add:
 
     // Load in length of OADDEND1
     ldr     x3, [sp, OADDEND1]
-	ldr     x3, [x3, lLength]  // Load oAddend1->lLength  
+	ldr     x3, [x3, LLENGTH]  // Load oAddend1->lLength  
 
     // Load in length of OADDEND2
     ldr     x4, [sp, OADDEND2] 
-	ldr     x4, [x4, lLength]  // Load oAddend1->lLength  
+	ldr     x4, [x4, LLENGTH]  // Load oAddend1->lLength  
 
     // Compare lengths and store the larger one
     cmp     x0, x1
