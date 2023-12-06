@@ -89,7 +89,7 @@ larger_end:
 
         // Local Variable Stack Offsets
         .equ    ULCARRY, 8 
-        .equ    ULSUM, 0
+        .equ    ULSUM, 16
         .equ    LINDEX, 24
         .equ    LSUMLENGTH, 32
 
