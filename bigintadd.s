@@ -118,6 +118,7 @@ BigInt_add:
     	ldr     x1, [x1]
 
     	// Call BigInt_larger to get the larger length
+		cmp 	x0, x1
     	bl      BigInt_larger
     	str     x0, [sp, LSUMLENGTH]
 
