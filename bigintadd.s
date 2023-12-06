@@ -253,8 +253,6 @@ loop_end:
         ldr     x30, [sp]
         add     sp, sp, ADD_STACK_BYTECOUNT
         ret
-
-        .size   BigInt_add, (. - BigInt_add)
         
 add_if3:
         // oSum->lLength = lSumLength;
@@ -266,8 +264,20 @@ add_if3:
         b       add_end
 
 add_if4:
-        mov x0, FALSE
-		ret
+        // oSum->aulDigits[lSumLength] = 1;
+        ldr     x0, [sp, OSUM]
+        add     x0, x0, #8
+        ldr     x1, [sp, LSUMLENGTH]
+        lsl     x1, x1, #3
+        add     x0, x0, x1
+        mov     x2, #1
+        str     x2, [x0]
+        
+        // lSumLength++;
+        ldr     x0, [sp, LSUMLENGTH]
+        mov     x1, #1
+        add     x0, x0, x1
+        str     x0, [sp, LSUMLENGTH]
 
         // goto epilogue;
         b       add_end
