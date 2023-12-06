@@ -136,7 +136,7 @@ BigInt_add:
         // Multiply MAX_DIGITS by sizeof(unsigned long) and store in x2
         mov     x1, MAX_DIGITS
         mov     x2, SIZE_OF_UL
-        mul     x2, x1, 
+        mul     x2, x1, x2
 
         // Store #0 in x1
         mov     x1, #0
