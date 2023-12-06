@@ -54,12 +54,12 @@ BigInt_add:
 	ldr     x4, [x4, LLENGTH]  // Load oAddend1->lLength  
 
     // Compare lengths and store the larger one
-    cmp     x0, x1
+    cmp     x3, x4
     bgt    use_first_length
-    mov     x0, x1
+    mov     x3, x4
 
 use_first_length:
-    str     x0, [sp, LSUMLENGTH]
+    str     x3, [sp, LSUMLENGTH]
 
     // Check if the larger length is 0, means both equal zero
     cmp     x3, 0
