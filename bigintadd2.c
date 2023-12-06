@@ -6,6 +6,22 @@
 /* In lieu of a boolean data type. */
 enum {FALSE, TRUE};
 
+static long BigInt_larger(long lLength1, long lLength2)
+{
+   long lLarger;
+
+   if (lLength1 <= lLength2) goto larger_if1;
+
+   lLarger = lLength1;
+   goto larger_end;
+   
+larger_if1:
+   lLarger = lLength2;
+
+larger_end:
+   return lLarger;
+}
+
 int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
 {
    unsigned long ulCarry;
@@ -13,37 +29,50 @@ int BigInt_add(BigInt_T oAddend1, BigInt_T oAddend2, BigInt_T oSum)
    long lIndex;
    long lSumLength;
 
-   /* Determine the larger length. */
-   if (oAddend1->lLength > oAddend2->lLength) lSumLength = oAddend1->lLength;
-   else lSumLength = oAddend2->lLength;
+   assert(oAddend1 != NULL);
+   assert(oAddend2 != NULL);
+   assert(oSum != NULL);
+   assert(oSum != oAddend1);
+   assert(oSum != oAddend2);
 
-   /* Clear oSum's array if necessary. */
-   if (oSum->lLength > lSumLength)
-      memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
+   lSumLength = BigInt_larger(oAddend1->lLength, oAddend2->lLength);
 
-   /* Perform the addition. */
+   if (oSum->lLength > lSumLength) goto before_memset;
+   goto after_memset;
+
+before_memset:
+   memset(oSum->aulDigits, 0, MAX_DIGITS * sizeof(unsigned long));
+
+after_memset:
    ulCarry = 0;
    lIndex = 0;
 
-   loop1:
-   if (!(lIndex < lSumLength)) goto endloop1;
-   ulSum = ulCarry + oAddend1->aulDigits[lIndex] + oAddend2->aulDigits[lIndex];
-   ulCarry = (ulSum < oAddend1->aulDigits[lIndex] || ulSum < oAddend2->aulDigits[lIndex]) ? 1 : 0;
+loop_start:
+   if (lIndex >= lSumLength) goto loop_end;
+
+   ulSum = ulCarry;
+   ulCarry = 0;
+
+   ulSum += oAddend1->aulDigits[lIndex];
+   if (ulSum < oAddend1->aulDigits[lIndex]) goto add_if1;
+
+add_if1:
+   ulSum += oAddend2->aulDigits[lIndex];
+   if (ulSum < oAddend2->aulDigits[lIndex]) goto add_if2;
+
+add_if2:
    oSum->aulDigits[lIndex] = ulSum;
    lIndex++;
-   goto loop1;
+   goto loop_start;
 
-   endloop1:
-   /* Check for a carry out of the last "column" of the addition. */
-   if (ulCarry != 1) goto endif1;
-   if (lSumLength == MAX_DIGITS)
-      return FALSE;
+loop_end:
+   if (ulCarry != 1) goto set_sumlength;
+
+   if (lSumLength == MAX_DIGITS) return FALSE;
    oSum->aulDigits[lSumLength] = 1;
    lSumLength++;
 
-   endif1:
-   /* Set the length of the sum. */
+set_sumlength:
    oSum->lLength = lSumLength;
-
    return TRUE;
 }
