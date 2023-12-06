@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // bigintadd.s
-// Authors: Alexander Delistathis, Matthew Zhang
+// Authors: Alex Delistathis, Matthew Zhang
 //----------------------------------------------------------------------
     .section .rodata
 
@@ -46,21 +46,23 @@ BigInt_add:
     str     x2, [sp, OSUM]
 
     // Load in length of OADDEND1
-    ldr     x3, [x0, LLENGTH]  // Assume length at offset 16 of the struct
+    ldr     x3, [sp, OADDEND1]
+	ldr     x3, [x3, lLength]  // Load oAddend1->lLength  
 
     // Load in length of OADDEND2
-    ldr     x4, [x1, LLENGTH]  // Assume length at offset 16 of the struct
+    ldr     x4, [sp, OADDEND2] 
+	ldr     x4, [x4, lLength]  // Load oAddend1->lLength  
 
     // Compare lengths and store the larger one
-    cmp     x3, x4
+    cmp     x0, x1
     bgt    use_first_length
-    mov     x3, x4
+    mov     x0, x1
 
 use_first_length:
-    str     x3, [sp, LSUMLENGTH]
+    str     x0, [sp, LSUMLENGTH]
 
     // Check if the larger length is 0, means both equal zero
-    cmp     x3, #0
+    cmp     x3, 0
     beq     handle_zero_case
 
     // Clear oSum's array if necessary
