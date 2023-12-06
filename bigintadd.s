@@ -128,7 +128,7 @@ BigInt_add:
         cmp     x0, x1
         ble     after_memset
 
-before_memset:
+		//memset(oSum->aulDigits,0, MAX_DIGITS * sizeof(unsigned long));
 		// STORE oSum->aulDigits in a register
         ldr     x0, [sp, OSUM]
         add     x0, x0, SIZE_OF_UL
@@ -170,7 +170,7 @@ loop_start:
         // ulSum += oAddend1->aulDigits[lIndex];
         ldr     x0, [sp, ULSUM]
         ldr     x1, [sp, OADDEND1]
-        add     x1, x1, #8
+        add     x1, x1, SIZE_OF_UL
         ldr     x2, [sp, LINDEX]
         lsl     x2, x2, #3
         add     x1, x1, x2
@@ -209,10 +209,8 @@ add_if1:
         mov     x0, #1
         str     x0, [sp, ULCARRY]
 
-        // goto add_if2;
-        b       add_if2
 add_if2:
-        // oSum->aulDigits[lIndex] = ULSUM;
+        // oSum->aulDigits[lIndex] = ulSum;
         ldr     x0, [sp, ULSUM]
         ldr     x1, [sp, OSUM]
         add     x1, x1, #8
@@ -238,7 +236,7 @@ loop_end:
         // if (LSUMLENGTH != MAX_DIGITS) goto add_if4;
         ldr     x0, [sp, LSUMLENGTH]
         cmp     x0, MAX_DIGITS
-        bne     add_if4
+        bne     loop_end_cont
 
         // Epilogue and return FALSE
         mov     x0, FALSE
@@ -246,7 +244,7 @@ loop_end:
         add     sp, sp, ADD_STACK_BYTECOUNT
         ret
 
-add_if4:
+loop_end_cont:
         // oSum->aulDigits[lSumLength] = 1;
         ldr     x0, [sp, OSUM]
         add     x0, x0, SIZE_OF_UL
