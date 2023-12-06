@@ -168,7 +168,6 @@ loop_start:
         add     x1, OADDEND1, SIZE_OF_UL
         lsl     x2, LINDEX, #3
         add     x1, x1, x2
-        ldr     x1, [x1]
         add     ULSUM, ULSUM, x1
 
         // if (ulSum >= oAddend1->aulDigits[lIndex]) goto add_if1;
