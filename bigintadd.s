@@ -71,7 +71,7 @@ use_first_length:
     ldr     x5, [sp, OSUM]
 
     // Load oSum->lLength
-	add     x5, x5, lLength  // Address of oSum->lLength
+	add     x5, x5, LLENGTH  // Address of oSum->lLength
 	
     // Compare oSum->lLength with lSumLength
     cmp     x5, x3
