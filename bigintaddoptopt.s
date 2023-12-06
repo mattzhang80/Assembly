@@ -178,9 +178,9 @@ add_if2:
         // lIndex++;
         add     LINDEX, LINDEX, #1
         
-        // if (lIndex >= lSumLength) goto loop_end;
-        cmp     LINDEX, LSUMLENGTH
-        bge     loop_end
+        // if (lIndex < lSumLength) goto loop_end;
+        cmp    LINDEX, LSUMLENGTH
+        bl     loop_start
 
 loop_end:
         // if (ulCarry != 1) goto set_sumlength;
