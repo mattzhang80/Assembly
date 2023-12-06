@@ -88,6 +88,7 @@ larger_end:
         .equ    ADD_STACK_BYTECOUNT, 64
 
         // Local Variable Stack Offsets
+		.equ 	LLENGTH, 0
         .equ    ULCARRY, 8 
         .equ    ULSUM, 16
         .equ    LINDEX, 24
@@ -112,33 +113,30 @@ BigInt_add:
     	str     x2, [sp, OSUM]
     
     	// Load in length of OADDEND1
-    	ldr     x0, [x0]
+    	ldr     x0, [x0, LLENGTH]
 
     	// Load in length of OADDEND2
-    	ldr     x1, [x1]
+    	ldr     x1, [x1, LLENGTH]
 
     	// Call BigInt_larger to get the larger length
     	bl      BigInt_larger
     	str     x0, [sp, LSUMLENGTH]
-
-    	// Check if the larger length is 0, which means both are zero
-    	// cmp     x0, #0
-    	// beq     handle_zero_case
         
-        // if (oSum->lLength <= lSumLength) goto before;
+        // if (oSum->lLength <= lSumLength) goto after_memset;
         ldr     x0, [sp, OSUM]
         ldr     x1, [sp, LSUMLENGTH]
         cmp     x0, x1
-        ble     before
+        ble     after_memset
 
-        // STORE oSum->aulDigits in a register
+before_memset:
+		// STORE oSum->aulDigits in a register
         ldr     x0, [sp, OSUM]
-        add     x0, x0, #8
+        add     x0, x0, SIZE_OF_UL
 
         // Multiply MAX_DIGITS by sizeof(unsigned long) and store in x2
         mov     x1, MAX_DIGITS
         mov     x2, SIZE_OF_UL
-        mul     x2, x1, x2
+        mul     x2, x1, 
 
         // Store #0 in x1
         mov     x1, #0
@@ -146,10 +144,7 @@ BigInt_add:
         // Execute the memset() function
         bl      memset
 
-        // goto before;
-        b       before
-
-before:
+after_memset:
         // ulCarry = 0;
         mov     x0, #0     
         str     x0, [sp, ULCARRY]
@@ -157,9 +152,6 @@ before:
         // lIndex = 0;
         str     x0, [sp, LINDEX]
 
-        // goto loop_start;
-        b       loop_start
-        
 loop_start:
         // if (lIndex >= lSumLength) goto loop_end;
         ldr     x0, [sp, LINDEX]
