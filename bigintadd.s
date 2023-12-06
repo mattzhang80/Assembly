@@ -46,10 +46,10 @@ BigInt_add:
     str     x2, [sp, OSUM]
 
     // Load in length of OADDEND1
-    ldr     x3, [x0, #16]  // Assume length at offset 16 of the struct
+    ldr     x3, [x0, LLENGTH]  // Assume length at offset 16 of the struct
 
     // Load in length of OADDEND2
-    ldr     x4, [x1, #15]  // Assume length at offset 16 of the struct
+    ldr     x4, [x1, LLENGTH]  // Assume length at offset 16 of the struct
 
     // Compare lengths and store the larger one
     cmp     x3, x4
@@ -79,7 +79,7 @@ use_first_length:
 
     // Clear oSum array
     // aulDigits is at offset #24 in the struct
-    add     x5, x5, #24  // Address of oSum->aulDigits
+    add     x5, x5, 8  // Address of oSum->aulDigits
     mov     x7, #0       // Zero to clear array
     mov     x8, #MAX_DIGITS
 
@@ -88,7 +88,7 @@ handle_zero_case:
     mov     x0, sp
     add     x0, x0, OSUM
     mov     x1, #0
-    str     x1, [x0, #16]  // Assume length at offset 16 of the struct
+    str     x1, [x0, LLENGTH]  // Assume length at offset 16 of the struct
     mov     x0, TRUE
     b       func_end
 
@@ -129,7 +129,7 @@ loop1:
 	// Load oAddend2->aulDigits[lIndex] - Revised
 	ldr     x10, [sp, OADDEND2]    // Load oAddend2 pointer
 	add     x10, x10, x7           // Calculate address of oAddend2->aulDigits[lIndex]
-	add     x10, x10, #24          // Adjust for the offset of aulDigits within the structure
+	add     x10, x10, 8          // Adjust for the offset of aulDigits within the structure
 	ldr     x9, [x10]              // Load the value from oAddend2->aulDigits[lIndex] into x9
 
     // ulSum = ulCarry + oAddend1->aulDigits[lIndex] + 
