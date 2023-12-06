@@ -225,11 +225,10 @@ loop_end:
         cmp     x0, #1
         bne     set_sumlength
 
-   		if (lSumLength != MAX_DIGITS) return FALSE;
+   		//if (lSumLength == MAX_DIGITS) return FALSE;
         ldr     x0, [sp, LSUMLENGTH]
-		mov 	x0, FALSE
         cmp     x0, MAX_DIGITS
-        bne     add_end
+        beq     ret_false
 
         // oSum->aulDigits[lSumLength] = 1;
         ldr     x0, [sp, OSUM]
@@ -252,7 +251,11 @@ set_sumlength:
         ldr     x1, [sp, LSUMLENGTH]
         str     x1, [x0]
         mov x0, TRUE
+		b add_end
 
+ret_false:
+		mov 	x0, FALSE
+		
 add_end:
         // Epilogue and return 
         ldr x30, [sp]
