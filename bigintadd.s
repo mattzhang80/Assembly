@@ -223,18 +223,13 @@ loop_end:
         // if (ulCarry != 1) goto set_sumlength;
         ldr     x0, [sp, ULCARRY]
         cmp     x0, #1
-        bne     set_sumlength
+        bne     return_false
 
-        // if (LSUMLENGTH != MAX_DIGITS) goto loop_end_cont;
+        // if (LSUMLENGTH != MAX_DIGITS) goto add_end;
         ldr     x0, [sp, LSUMLENGTH]
         cmp     x0, MAX_DIGITS
-        bne     loop_end_cont
+        bne     add_end
 
-        // Epilogue and return FALSE
-        mov     x0, FALSE
-		goto add_end
-
-loop_end_cont:
         // oSum->aulDigits[lSumLength] = 1;
         ldr     x0, [sp, OSUM]
         add     x0, x0, SIZE_OF_UL
@@ -258,10 +253,12 @@ set_sumlength:
         mov x0, TRUE
 
 add_end:
-        // Epilogue and return TRUE
+        // Epilogue and return 
         ldr x30, [sp]
         add sp, sp, ADD_STACK_BYTECOUNT
         ret
 
         .size   BigInt_larger, (. - BigInt_larger)
         .size BigInt_add, (. - BigInt_add)
+
+return_false: 
