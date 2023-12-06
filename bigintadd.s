@@ -1,303 +1,200 @@
-	.section	__TEXT,__text,regular,pure_instructions
-	.build_version macos, 13, 0	sdk_version 13, 3
-	.globl	_BigInt_add                     ; -- Begin function BigInt_add
-	.p2align	2
-_BigInt_add:                            ; @BigInt_add
-	.cfi_startproc
-; %bb.0:
-	sub	sp, sp, #80
-	.cfi_def_cfa_offset 80
-	stp	x29, x30, [sp, #64]             ; 16-byte Folded Spill
-	add	x29, sp, #64
-	.cfi_def_cfa w29, 16
-	.cfi_offset w30, -8
-	.cfi_offset w29, -16
-	stur	x0, [x29, #-16]
-	stur	x1, [x29, #-24]
-	str	x2, [sp, #32]
-	ldur	x8, [x29, #-16]
-	subs	x8, x8, #0
-	cset	w9, eq
-                                        ; implicit-def: $x8
-	mov	x8, x9
-	ands	x8, x8, #0x1
-	cset	w8, eq
-	tbnz	w8, #0, LBB0_2
-	b	LBB0_1
-LBB0_1:
-	adrp	x0, l___func__.BigInt_add@PAGE
-	add	x0, x0, l___func__.BigInt_add@PAGEOFF
-	adrp	x1, l_.str@PAGE
-	add	x1, x1, l_.str@PAGEOFF
-	mov	w2, #41
-	adrp	x3, l_.str.1@PAGE
-	add	x3, x3, l_.str.1@PAGEOFF
-	bl	___assert_rtn
-LBB0_2:
-	b	LBB0_3
-LBB0_3:
-	ldur	x8, [x29, #-24]
-	subs	x8, x8, #0
-	cset	w9, eq
-                                        ; implicit-def: $x8
-	mov	x8, x9
-	ands	x8, x8, #0x1
-	cset	w8, eq
-	tbnz	w8, #0, LBB0_5
-	b	LBB0_4
-LBB0_4:
-	adrp	x0, l___func__.BigInt_add@PAGE
-	add	x0, x0, l___func__.BigInt_add@PAGEOFF
-	adrp	x1, l_.str@PAGE
-	add	x1, x1, l_.str@PAGEOFF
-	mov	w2, #42
-	adrp	x3, l_.str.2@PAGE
-	add	x3, x3, l_.str.2@PAGEOFF
-	bl	___assert_rtn
-LBB0_5:
-	b	LBB0_6
-LBB0_6:
-	ldr	x8, [sp, #32]
-	subs	x8, x8, #0
-	cset	w9, eq
-                                        ; implicit-def: $x8
-	mov	x8, x9
-	ands	x8, x8, #0x1
-	cset	w8, eq
-	tbnz	w8, #0, LBB0_8
-	b	LBB0_7
-LBB0_7:
-	adrp	x0, l___func__.BigInt_add@PAGE
-	add	x0, x0, l___func__.BigInt_add@PAGEOFF
-	adrp	x1, l_.str@PAGE
-	add	x1, x1, l_.str@PAGEOFF
-	mov	w2, #43
-	adrp	x3, l_.str.3@PAGE
-	add	x3, x3, l_.str.3@PAGEOFF
-	bl	___assert_rtn
-LBB0_8:
-	b	LBB0_9
-LBB0_9:
-	ldr	x8, [sp, #32]
-	ldur	x9, [x29, #-16]
-	subs	x8, x8, x9
-	cset	w9, eq
-                                        ; implicit-def: $x8
-	mov	x8, x9
-	ands	x8, x8, #0x1
-	cset	w8, eq
-	tbnz	w8, #0, LBB0_11
-	b	LBB0_10
-LBB0_10:
-	adrp	x0, l___func__.BigInt_add@PAGE
-	add	x0, x0, l___func__.BigInt_add@PAGEOFF
-	adrp	x1, l_.str@PAGE
-	add	x1, x1, l_.str@PAGEOFF
-	mov	w2, #44
-	adrp	x3, l_.str.4@PAGE
-	add	x3, x3, l_.str.4@PAGEOFF
-	bl	___assert_rtn
-LBB0_11:
-	b	LBB0_12
-LBB0_12:
-	ldr	x8, [sp, #32]
-	ldur	x9, [x29, #-24]
-	subs	x8, x8, x9
-	cset	w9, eq
-                                        ; implicit-def: $x8
-	mov	x8, x9
-	ands	x8, x8, #0x1
-	cset	w8, eq
-	tbnz	w8, #0, LBB0_14
-	b	LBB0_13
-LBB0_13:
-	adrp	x0, l___func__.BigInt_add@PAGE
-	add	x0, x0, l___func__.BigInt_add@PAGEOFF
-	adrp	x1, l_.str@PAGE
-	add	x1, x1, l_.str@PAGEOFF
-	mov	w2, #45
-	adrp	x3, l_.str.5@PAGE
-	add	x3, x3, l_.str.5@PAGEOFF
-	bl	___assert_rtn
-LBB0_14:
-	b	LBB0_15
-LBB0_15:
-	ldur	x8, [x29, #-16]
-	ldr	x0, [x8]
-	ldur	x8, [x29, #-24]
-	ldr	x1, [x8]
-	bl	_BigInt_larger
-	str	x0, [sp]
-	ldr	x8, [sp, #32]
-	ldr	x8, [x8]
-	ldr	x9, [sp]
-	subs	x8, x8, x9
-	cset	w8, le
-	tbnz	w8, #0, LBB0_17
-	b	LBB0_16
-LBB0_16:
-	ldr	x8, [sp, #32]
-	add	x0, x8, #8
-	mov	w1, #0
-	mov	x2, #262144
-	mov	x3, #-1
-	bl	___memset_chk
-	b	LBB0_17
-LBB0_17:
-	str	xzr, [sp, #24]
-	str	xzr, [sp, #8]
-	b	LBB0_18
-LBB0_18:                                ; =>This Inner Loop Header: Depth=1
-	ldr	x8, [sp, #8]
-	ldr	x9, [sp]
-	subs	x8, x8, x9
-	cset	w8, ge
-	tbnz	w8, #0, LBB0_25
-	b	LBB0_19
-LBB0_19:                                ;   in Loop: Header=BB0_18 Depth=1
-	ldr	x8, [sp, #24]
-	str	x8, [sp, #16]
-	str	xzr, [sp, #24]
-	ldur	x8, [x29, #-16]
-	add	x8, x8, #8
-	ldr	x9, [sp, #8]
-	ldr	x9, [x8, x9, lsl #3]
-	ldr	x8, [sp, #16]
-	add	x8, x8, x9
-	str	x8, [sp, #16]
-	ldr	x8, [sp, #16]
-	ldur	x9, [x29, #-16]
-	add	x9, x9, #8
-	ldr	x10, [sp, #8]
-	ldr	x9, [x9, x10, lsl #3]
-	subs	x8, x8, x9
-	cset	w8, hs
-	tbnz	w8, #0, LBB0_21
-	b	LBB0_20
-LBB0_20:                                ;   in Loop: Header=BB0_18 Depth=1
-	mov	x8, #1
-	str	x8, [sp, #24]
-	b	LBB0_21
-LBB0_21:                                ;   in Loop: Header=BB0_18 Depth=1
-	ldur	x8, [x29, #-24]
-	add	x8, x8, #8
-	ldr	x9, [sp, #8]
-	ldr	x9, [x8, x9, lsl #3]
-	ldr	x8, [sp, #16]
-	add	x8, x8, x9
-	str	x8, [sp, #16]
-	ldr	x8, [sp, #16]
-	ldur	x9, [x29, #-24]
-	add	x9, x9, #8
-	ldr	x10, [sp, #8]
-	ldr	x9, [x9, x10, lsl #3]
-	subs	x8, x8, x9
-	cset	w8, hs
-	tbnz	w8, #0, LBB0_23
-	b	LBB0_22
-LBB0_22:                                ;   in Loop: Header=BB0_18 Depth=1
-	mov	x8, #1
-	str	x8, [sp, #24]
-	b	LBB0_23
-LBB0_23:                                ;   in Loop: Header=BB0_18 Depth=1
-	ldr	x8, [sp, #16]
-	ldr	x9, [sp, #32]
-	add	x9, x9, #8
-	ldr	x10, [sp, #8]
-	str	x8, [x9, x10, lsl #3]
-	b	LBB0_24
-LBB0_24:                                ;   in Loop: Header=BB0_18 Depth=1
-	ldr	x8, [sp, #8]
-	add	x8, x8, #1
-	str	x8, [sp, #8]
-	b	LBB0_18
-LBB0_25:
-	ldr	x8, [sp, #24]
-	subs	x8, x8, #1
-	cset	w8, ne
-	tbnz	w8, #0, LBB0_29
-	b	LBB0_26
-LBB0_26:
-	ldr	x8, [sp]
-	subs	x8, x8, #8, lsl #12             ; =32768
-	cset	w8, ne
-	tbnz	w8, #0, LBB0_28
-	b	LBB0_27
-LBB0_27:
-	stur	wzr, [x29, #-4]
-	b	LBB0_30
-LBB0_28:
-	ldr	x8, [sp, #32]
-	add	x9, x8, #8
-	ldr	x10, [sp]
-	mov	x8, #1
-	str	x8, [x9, x10, lsl #3]
-	ldr	x8, [sp]
-	add	x8, x8, #1
-	str	x8, [sp]
-	b	LBB0_29
-LBB0_29:
-	ldr	x8, [sp]
-	ldr	x9, [sp, #32]
-	str	x8, [x9]
-	mov	w8, #1
-	stur	w8, [x29, #-4]
-	b	LBB0_30
-LBB0_30:
-	ldur	w0, [x29, #-4]
-	ldp	x29, x30, [sp, #64]             ; 16-byte Folded Reload
-	add	sp, sp, #80
-	ret
-	.cfi_endproc
-                                        ; -- End function
-	.p2align	2                               ; -- Begin function BigInt_larger
-_BigInt_larger:                         ; @BigInt_larger
-	.cfi_startproc
-; %bb.0:
-	sub	sp, sp, #32
-	.cfi_def_cfa_offset 32
-	str	x0, [sp, #24]
-	str	x1, [sp, #16]
-	ldr	x8, [sp, #24]
-	ldr	x9, [sp, #16]
-	subs	x8, x8, x9
-	cset	w8, le
-	tbnz	w8, #0, LBB1_2
-	b	LBB1_1
-LBB1_1:
-	ldr	x8, [sp, #24]
-	str	x8, [sp, #8]
-	b	LBB1_3
-LBB1_2:
-	ldr	x8, [sp, #16]
-	str	x8, [sp, #8]
-	b	LBB1_3
-LBB1_3:
-	ldr	x0, [sp, #8]
-	add	sp, sp, #32
-	ret
-	.cfi_endproc
-                                        ; -- End function
-	.section	__TEXT,__cstring,cstring_literals
-l___func__.BigInt_add:                  ; @__func__.BigInt_add
-	.asciz	"BigInt_add"
+//----------------------------------------------------------------------
+// bigintadd.s
+// Authors: Alexander Delistathis, Matthew Zhang
+//----------------------------------------------------------------------
+    .section .rodata
 
-l_.str:                                 ; @.str
-	.asciz	"bigintadd.c"
+//----------------------------------------------------------------------
+    .section .data
 
-l_.str.1:                               ; @.str.1
-	.asciz	"oAddend1 != NULL"
+//----------------------------------------------------------------------
+    .section .bss
 
-l_.str.2:                               ; @.str.2
-	.asciz	"oAddend2 != NULL"
+//----------------------------------------------------------------------
+.section .text
+    .equ    ADD_STACK_BYTECOUNT, 112
 
-l_.str.3:                               ; @.str.3
-	.asciz	"oSum != NULL"
+    // Constants
+    .equ    TRUE, 1
+    .equ    FALSE, 0
+    .equ    MAX_DIGITS, 100
+    .equ    SIZE_OF_UL, 8
+        
+    // Local Variable Stack Offsets
+    .equ    ULCARRY, 8 
+    .equ    ULSUM, 16
+    .equ    LINDEX, 24
+    .equ    LSUMLENGTH, 32
 
-l_.str.4:                               ; @.str.4
-	.asciz	"oSum != oAddend1"
+    // Parameter Stack Offsets
+    .equ    OADDEND1, 40
+    .equ    OADDEND2, 48
+    .equ    OSUM, 56
 
-l_.str.5:                               ; @.str.5
-	.asciz	"oSum != oAddend2"
+.global BigInt_add
+    .type BigInt_add, @function
 
-.subsections_via_symbols
+BigInt_add: 
+    // Prologue
+    sub     sp, sp, ADD_STACK_BYTECOUNT
+    str     x30, [sp]
+
+    // Initialize Parameters
+    str     x0, [sp, OADDEND1]
+    str     x1, [sp, OADDEND2]
+    str     x2, [sp, OSUM]
+
+    // Load in length of OADDEND1
+    ldr     x3, [x0, #16]  // Assume length at offset 16 of the struct
+
+    // Load in length of OADDEND2
+    ldr     x4, [x1, #16]  // Assume length at offset 16 of the struct
+
+    // Compare lengths and store the larger one
+    cmp     x3, x4
+    bgt    use_first_length
+    mov     x3, x4
+
+use_first_length:
+    str     x3, [sp, LSUMLENGTH]
+
+    // Check if the larger length is 0, means both equal zero
+    cmp     x3, #0
+    beq     handle_zero_case
+
+    // Clear oSum's array if necessary
+    // Load lSumLength from the stack
+    ldr     x3, [sp, LSUMLENGTH]
+
+    // Load oSum pointer
+    ldr     x5, [sp, OSUM]
+
+    // Load oSum->lLength
+    ldr     x6, [x5, #16]  // Assume lLength at offset 16
+
+    // Compare oSum->lLength with lSumLength
+    cmp     x6, x3
+    ble    skip_clear  // if oSum->lLength <= lSumLength, skip  clearing
+
+    // Clear oSum array
+    // aulDigits is at offset #24 in the struct
+    add     x5, x5, #24  // Address of oSum->aulDigits
+    mov     x7, #0       // Zero to clear array
+    mov     x8, #MAX_DIGITS
+
+handle_zero_case:
+    // If both inputs zero, set the length of oSum to 0 and return TRUE
+    mov     x0, sp
+    add     x0, x0, OSUM
+    mov     x1, #0
+    str     x1, [x0, #16]  // Assume length at offset 16 of the struct
+    mov     x0, TRUE
+    b       func_end
+
+clear_loop:
+    str     x7, [x5], #8  // Store 0 and post-increment address by 8
+    subs    x8, x8, #1    // Decrement counter
+    bne    clear_loop    // If counter not zero, continue loop
+
+skip_clear:
+    // ulCarry = 0;
+    mov     x0, #0     
+    str     x0, [sp, ULCARRY]
+        
+    // lIndex = 0;
+    str     x0, [sp, LINDEX]
+    b loop1
+
+loop1:
+    // Load lIndex and lSumLength
+    ldr     x4, [sp, LINDEX]       // x4 = lIndex
+    ldr     x5, [sp, LSUMLENGTH]   // x5 = lSumLength
+
+    // Check if lIndex < lSumLength
+    cmp     x4, x5      
+    bge    endloop1                // Exit loop if lIndex >= lSumLength
+
+    // Load ulCarry
+    ldr     x6, [sp, ULCARRY]      // x6 = ulCarry
+
+    // Calculate address offset for array indexing (x4 * 8)
+    mov     x7, x4
+    lsl     x7, x7, #3             // x7 = lIndex * 8 
+
+    // Load oAddend1->aulDigits[lIndex]
+    ldr     x8, [sp, OADDEND1]     // Load oAddend1 pointer
+    ldr     x8, [x8, x7]           // Load oAddend1->aulDigits[lIndex]
+
+    // Load oAddend2->aulDigits[lIndex]
+    ldr     x9, [sp, OADDEND2]     // Load oAddend2 pointer
+    ldr     x9, [x9, x7]           // Load oAddend2->aulDigits[lIndex]
+
+    // ulSum = ulCarry + oAddend1->aulDigits[lIndex] + 
+    // oAddend2->aulDigits[lIndex]
+    add     x10, x6, x8   // x10 = ulCarry + oAddend1->aulDigits[lIndex]
+    add     x10, x10, x9  // x10 = ulSum + oAddend2->aulDigits[lIndex]
+    str     x10, [sp, ULSUM]       // Store ulSum
+
+    // Check for carry from oAddend1
+    cmp     x10, x8
+    bl      set_carry      // If ulSum < oAddend1->aulDigits[lIndex],
+                           //set carry
+    mov     x6, #0                 // Otherwise, clear carry
+
+check_carry_oaddend2:
+    // Check for carry from oAddend2
+    cmp     x10, x9
+    blo    set_carry          // If ulSum < oAddend2->aulDigits[lIndex], 
+                              // set carry
+    b       continue_loop
+
+set_carry:
+    mov     x6, #1                 // Set carry
+
+continue_loop:
+    // Store ulSum into oSum->aulDigits[lIndex]
+    ldr     x11, [sp, OSUM]        // Load oSum pointer
+    str     x10, [x11, x7]     // Store ulSum at oSum->aulDigits[lIndex]
+
+    // Increment lIndex
+    add     x4, x4, #1
+    str     x4, [sp, LINDEX]
+    b       loop1
+
+endloop1:
+    ldr     x6, [sp, ULCARRY]        // Load ulCarry
+    cmp     x6, #1
+    bne     endif1
+
+    ldr     x5, [sp, LSUMLENGTH]     // Load lSumLength
+    cmp     x5, #MAX_DIGITS
+    beq     return_false
+
+    ldr     x8, [sp, OSUM]           // Load oSum pointer
+    add     x5, x5, #1
+    str     x5, [sp, LSUMLENGTH]
+
+    lsl     x9, x5, #3
+    sub     x9, x9, #8
+    mov     x10, #1
+    str     x10, [x8, x9]  // Store 1 at oSum->aulDigits[lSumLength - 1]
+
+    b       endif1
+
+endif1:
+    ldr     x5, [sp, LSUMLENGTH]     // Load lSumLength
+    ldr     x8, [sp, OSUM]           // Load oSum pointer
+    str     x5, [x8, #16]           // Store lSumLength at oSum->lLength
+
+    mov     x0, #TRUE
+    b       func_end
+
+return_false:
+    mov     x0, #FALSE
+
+func_end:
+    // Function epilogue
+    ldr     x30, [sp]
+    add     sp, sp, ADD_STACK_BYTECOUNT
+    ret
+    .size BigInt_add, (. - BigInt_add)
