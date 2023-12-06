@@ -190,7 +190,7 @@ loop_end:
    	// if (lSumLength == MAX_DIGITS) return FALSE;
         cmp     LSUMLENGTH, MAX_DIGITS
         beq     ret_false
-a
+
         // oSum->aulDigits[lSumLength] = 1;
         add     x0, OSUM, SIZE_OF_UL
         lsl     x1, LSUMLENGTH, #3
