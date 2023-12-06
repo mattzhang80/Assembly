@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------
 .section .text
-    .equ    ADD_STACK_BYTECOUNT, 80
+    .equ    ADD_STACK_BYTECOUNT, 64
 
     // Constants
     .equ    TRUE, 1
