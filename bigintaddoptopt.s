@@ -125,9 +125,8 @@ after_memset:
         // lIndex = 0;
         mov     LINDEX, #0
 
-        // if (lIndex >= lSumLength) goto loop_end;
-        cmp     LINDEX, LSUMLENGTH
-        bge     loop_end
+        // Jump to condition check at the end of the loop
+        b       loop_condition_check
 
 loop_start:
 
@@ -150,8 +149,6 @@ loop_start:
 
         // ULCARRY = 1;
         mov     ULCARRY, #1
-
-        b add_if1
 
 add_if1:
         // ulSum += oAddend2->aulDigits[lIndex];
@@ -178,9 +175,10 @@ add_if2:
         // lIndex++;
         add     LINDEX, LINDEX, #1
         
-        // if (lIndex < lSumLength) goto loop_end;
-        cmp    LINDEX, LSUMLENGTH
-        bl     loop_start
+loop_condition_check:
+        // Check if loop should continue
+        cmp     LINDEX, LSUMLENGTH
+        blt     loop_start
 
 loop_end:
         // if (ulCarry != 1) goto set_sumlength;
