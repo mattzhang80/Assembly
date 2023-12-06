@@ -165,7 +165,7 @@ add_if1:
     // No carry, skip to storing sum
     b       store_sum
 
-add_if2:
+store_sum:
     // Carry occurred, set carry
     mov     ULCARRY, #1
     // oSum->aulDigits[lIndex] = ulSum;
