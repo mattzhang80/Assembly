@@ -121,7 +121,6 @@ before_memset:
 after_memset:
         // ulCarry = 0;
         mov     ULCARRY, #0     
-        
         // lIndex = 0;
         mov     LINDEX, #0
 
@@ -129,7 +128,6 @@ after_memset:
         b       loop_condition_check
 
 loop_start:
-
         // ulSum = ulCarry;
         mov     ULSUM, ULCARRY
 
@@ -175,18 +173,14 @@ store_sum:
     lsl     x2, LINDEX, #3         
     add     x1, x1, x2             
     str     ULSUM, [x1]            
-    
-    // Prepare for the next iteration
-    add     LINDEX, LINDEX, #1     // Increment index for the next digit
 
-    // Continue to loop condition check
-    b       loop_condition_check
-
+    // lIndex++;
+    add     LINDEX, LINDEX, #1    
         
 loop_condition_check:
         // Check if loop should continue
         cmp     LINDEX, LSUMLENGTH
-        blt     loop_start
+        bge     loop_end
 
 loop_end:
         // if (ulCarry != 1) goto set_sumlength;
