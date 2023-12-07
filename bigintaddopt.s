@@ -148,11 +148,12 @@ BigInt_add:
         bl      memset
 
 after_memset:
-        // ulCarry = 0;
-        mov     ULCARRY, #0     
-        
-        // lIndex = 0;
-        mov     LINDEX, #0
+    // Clear the carry flag
+    mov     ULSUM, #0
+    adds    ULSUM, ULSUM, #0
+
+    // Initialize the loop index
+    mov     LINDEX, #0
 
 loop_start:
         // if (lIndex >= lSumLength) goto loop_end;
@@ -178,6 +179,13 @@ loop_start:
 
         // ULCARRY = 1;
         mov     ULCARRY, #1
+
+        // Prepare for the next iteration
+        add     LINDEX, LINDEX, #1
+
+        // Loop condition check
+        cmp     LINDEX, LSUMLENGTH
+        blt     loop_start
 
 add_if1:
         // ulSum += oAddend2->aulDigits[lIndex];
