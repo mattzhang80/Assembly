@@ -138,6 +138,9 @@ loop_start:
     ldr     x2, [x2]
     adcs    ULSUM, x1, x2       // Add both digits and the carry flag
 
+    // Check if the addition caused an overflow
+    bcs     overflow_occurred   // Branch to overflow handling if carry set
+
     // Store the result
     add     x1, OSUM, SIZE_OF_UL
     lsl     x2, LINDEX, #3
@@ -148,11 +151,21 @@ loop_start:
     add     LINDEX, LINDEX, #1
     b       loop_cond_check
 
+
 loop_end:
-    // Check for overflow (carry flag is set if overflow occurred)
-    mrs     x1, APSR                // Move the status register to x1
-    tst     x1, #0x20000000         // Test the carry flag (C bit in APSR)
-    bne     overflow_occurred       // Branch if carry flag is set
+    // Check if carry flag is set after the final loop iteration
+    // (This checks for any overflow in the last iteration)
+    bcs     overflow_occurred   // Branch to overflow handling if carry set
+
+    // Set the length of the result BigInt to lSumLength
+    mov     x0, OSUM            // Load the address of oSum
+    str     LSUMLENGTH, [x0]    // Store lSumLength in oSum->lLength
+
+    // Set the return value to TRUE (indicating no overflow)
+    mov     x0, TRUE            // TRUE typically equals 1
+
+    // Jump to the function epilogue
+    b       add_end
 
 set_sumlength:
     // oSum->lLength = lSumLength;
