@@ -181,11 +181,11 @@ loop_start:
         mov     ULCARRY, #1
 
         // Prepare for the next iteration
-        add     LINDEX, LINDEX, #1
+         add     LINDEX, LINDEX, #1
 
-        // Loop condition check
-        cmp     LINDEX, LSUMLENGTH
-        blt     loop_start
+         // Loop condition check
+         cmp     LINDEX, LSUMLENGTH
+         blt     loop_start
 
 add_if1:
         // ulSum += oAddend2->aulDigits[lIndex];
